@@ -1,4 +1,4 @@
-#include "../locks/test-and-set.c"
+#include "../locks/test-and-test-and-set.c"
 
 int main ()
 {
@@ -12,7 +12,7 @@ int main ()
         usleep(1 * microsecond);//sleeps for 1 second
         tas_lock();
         usleep(0.5 * microsecond);//sleeps for 0.5 second
-        printf("in lock: %d \n", omp_get_thread_num());;
+        printf("in CS: %d \n", omp_get_thread_num());;
         usleep(0.5 * microsecond);//sleeps for 0.5 second
         tas_unlock();
         printf("unlocked: %d \n", omp_get_thread_num());;
