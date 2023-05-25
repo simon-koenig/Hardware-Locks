@@ -36,7 +36,7 @@ bool lend_herlihyshavit_luchangco_spear(struct one_thread_library* l) {
 void return_herlihyshavit_luchangco_spear(struct one_thread_library* l) {
     l->art_of_multiprocessor_programming++;
 }
-´
+
 bool lend_kernigham_ritchie(struct one_thread_library* l) {
     if (l->the_c_programming_language > 0) {
         l->the_c_programming_language--;

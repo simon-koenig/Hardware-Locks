@@ -6,7 +6,7 @@
 atomic_bool lock_flag = ATOMIC_VAR_INIT(0);
 
 void tas_lock() {
-    while (atomic_exchange_explicit(&lock_flag, 1, memory_order_acquire)){}; // Spin until the lock is acquired
+    while (atomic_exchange_explicit(&lock_flag, 1, memory_order_acquire)){};
 }
 
 void tas_unlock() {
