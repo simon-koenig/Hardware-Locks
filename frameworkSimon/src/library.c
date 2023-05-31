@@ -4,6 +4,7 @@
 #include <strings.h>
 #include <stdbool.h>
 #include <omp.h>
+#include "array-lock.c"
 
 /* These structs should to match the definition in benchmark.py
  */
@@ -25,7 +26,6 @@ struct one_thread_library {
 } library;
 
 
-
 bool lend_herlihyshavit_luchangco_spear(struct one_thread_library* l) {
     if (l->art_of_multiprocessor_programming > 0) {
         l->art_of_multiprocessor_programming--;
@@ -38,40 +38,20 @@ void return_herlihyshavit_luchangco_spear(struct one_thread_library* l) {
     l->art_of_multiprocessor_programming++;
 }
 
-bool lend_kernigham_ritchie(struct one_thread_library* l) {
-    if (l->the_c_programming_language > 0) {
-        l->the_c_programming_language--;
-        return true;
-    }
-    return false;
-}
 
-void return_kernigham_ritchie(struct one_thread_library* l) {
-    l->the_c_programming_language++;
-}
-
-struct counters random_bench1(struct one_thread_library* l, int times, int seed) {
+struct counters random_bench1(struct one_thread_library* l, int times) {
     int tid = omp_get_thread_num();
     printf("Thread %d started.\n", tid);
     // Barrier to force OMP to start all threads at the same time
     #pragma omp barrier
 
-    struct random_data rand_state;
-    int choice;
-    char statebuf[32];
-    bzero(&rand_state, sizeof(struct random_data));
-    bzero(&statebuf,   sizeof(statebuf));
-    initstate_r(seed, statebuf, 32, &rand_state);
-
     struct counters data = {.failed_turns = 0,
                             .successful_lends = 0};
 
     int herlihy_shavit_luchangco_spear = 0;
-    int kernigham_ritchie = 0;
 
-    for (int i=0; i<times;) {
+    for (int i=0; i<times;) { // times here is the number of times every thread enters the critical section
         // What are we reading today?
-        random_r(&rand_state, &choice);
 
         /*
         printf("Thread %d: has %d AMP books and %d C books.\n",\
@@ -79,9 +59,8 @@ struct counters random_bench1(struct one_thread_library* l, int times, int seed)
         */
         // We can only have exclusive access to the library
         // Here omp critical locks a built in lock. We have to replace this by our own implemented locks. 
-        #pragma omp critical
+        lock(); // Replace omp critical with custom lock 
         {
-            if (choice > ((1<<30))) {
                 if (lend_herlihyshavit_luchangco_spear(l)) {
                     herlihy_shavit_luchangco_spear++;
                     data.successful_lends++;
@@ -92,20 +71,9 @@ struct counters random_bench1(struct one_thread_library* l, int times, int seed)
                 } else {
                     data.failed_turns++;
                 }
-            } else {
-                if (lend_kernigham_ritchie(l)) {
-                    kernigham_ritchie++;
-                    data.successful_lends++;
-                } else if (kernigham_ritchie > 0) {
-                    return_kernigham_ritchie(l);
-                    kernigham_ritchie--;
-                    i++;
-                } else {
-                    data.failed_turns++;
-                }
             }
+        unlock() ;
         }
-    }
     return data;
 }
 
@@ -122,7 +90,7 @@ struct bench_result small_bench(int t, int len) {
     {
         #pragma omp parallel for
         for (int i=0; i<t; i++) {
-            thread_data[i] = random_bench1(&library, len, i);
+            thread_data[i] = random_bench1(&library, len);
         }
     }
     toc = omp_get_wtime();
@@ -149,9 +117,9 @@ struct bench_result small_bench(int t, int len) {
 int main(int argc, char * argv[]) {
     (void) argc;
     (void) argv;
-    small_bench(1, 10);
-    small_bench(2, 10);
-    small_bench(4, 10);
-    small_bench(8, 10);
-    small_bench(16, 10);
+    small_bench(1, 100);
+    small_bench(2, 100);
+    small_bench(4, 100);
+    small_bench(8, 100);
+    small_bench(16, 100);
 }

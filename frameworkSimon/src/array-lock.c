@@ -6,7 +6,7 @@
 
 // Set Flags, first one to true else false 
 int n = 8; //
-bool flags[8] = {true}; 
+bool flags[16] = {true}; 
 
 // Making an atomic counter
 _Atomic int tail = 0;
@@ -15,7 +15,7 @@ _Atomic int tail = 0;
 __thread int mySlot ;
 
 void lock() {
-    mySlot = __sync_fetch_and_add(&tail, 1) % 8;
+    mySlot = __sync_fetch_and_add(&tail, 1) % 16;
     
     while (!flags[mySlot]) {
         // Wait until the flag at mySlot is set to true
@@ -23,5 +23,5 @@ void lock() {
 }
 void unlock() {
     flags[mySlot] = false;
-    flags[(mySlot + 1) % 8] = true;
+    flags[(mySlot + 1) % 16] = true;
 }
