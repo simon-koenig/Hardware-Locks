@@ -80,12 +80,12 @@ void averageBench(int numThreads,unsigned int sampleSize){
 
 int main() {
     // Set the number of threads
-    int numThreads[8] = {1,2,4,8,16,32,50,100};
+    int numThreads[10] = {1,2,3,4,5,8,10,16,32,50};
     // Set sample Size
     unsigned int sampleSize = 20;
 
     // Run the benchmark
-    for(size_t i=0;i<8;i++){
+    for(size_t i=0;i<10;i++){
         omp_set_num_threads(numThreads[i]);
         printf("Number of threads %i \n", numThreads[i]);
         averageBench(numThreads[i],sampleSize);
