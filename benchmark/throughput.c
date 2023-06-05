@@ -67,16 +67,17 @@ double benchmarkLockHighContention(int numberOfThreads, unsigned int sampleSize)
 void averageBench(int numThreads,unsigned int sampleSize){
 
     double averageThroughput = 0.0;
-    int times = 100; 
+    unsigned int times = 10; 
     for (size_t i=0; i<times; i++){
         averageThroughput += benchmarkLockHighContention(numThreads,sampleSize);
     }
     averageThroughput = averageThroughput/times;
 
-    printf("Average Throughput: %.6f operations per second\n", averageThroughput);
+    printf("Average Throughput: %.6f operations per second\n", averageThroughput); 
     
 
 }
+
 
 
 int main() {
