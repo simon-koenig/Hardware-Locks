@@ -67,7 +67,7 @@ double benchmarkLockHighContention(int numberOfThreads, unsigned int sampleSize)
 void averageBench(int numThreads,unsigned int sampleSize){
 
     double averageThroughput = 0.0;
-    unsigned int times = 7;
+    unsigned int times = 5;
     for (size_t i=0; i<times; i++){
         averageThroughput += benchmarkLockHighContention(numThreads,sampleSize);
     }
