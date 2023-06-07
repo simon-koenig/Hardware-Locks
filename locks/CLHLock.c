@@ -7,8 +7,6 @@
 
 // Source: Ideas from http://concurrencyfreaks.blogspot.com/2014/05/exchg-mutex-alternative-to-mcs-lock.html
 
-
-
 typedef struct Node
 {
     _Atomic char succ_must_wait;
@@ -21,7 +19,7 @@ typedef struct
     Node * mynode;
     char padding[64];  // To avoid false sharing with the tail
     _Atomic (Node *) tail;
-} CLHMutex;
+} Lock;
 
 
 static Node * clh_create_node(char islocked)
@@ -36,7 +34,7 @@ static Node * clh_create_node(char islocked)
  *
  * Progress Condition: Wait-Free Population Oblivious
  */
-void clh_init(CLHMutex * self)
+void init(Lock * self)
 {
     // We create the first sentinel node unlocked, with islocked=0
     Node * node = clh_create_node(0);
@@ -52,7 +50,7 @@ void clh_init(CLHMutex * self)
  *
  * Progress Condition: Wait-Free Population Oblivious
  */
-void clh_destroy(CLHMutex * self)
+void destroy(Lock * self)
 {
     free(atomic_load(&self->tail));
 }
@@ -64,7 +62,7 @@ void clh_destroy(CLHMutex * self)
  *
  * Progress Condition: Blocking
  */
-void clh_lock(CLHMutex * self)
+void lock(Lock * self)
 {
     // Create the new node locked by default, setting islocked=1
     Node *mynode = clh_create_node(1); // My own node 
@@ -91,7 +89,7 @@ void clh_lock(CLHMutex * self)
  * mutex.
  * 
  */
-void clh_unlock(CLHMutex * self)
+void unlock(Lock * self)
 {
     // We assume that if this function was called, it is because this thread is
     // currently holding the lock, which means that self->mynode is pointing to
