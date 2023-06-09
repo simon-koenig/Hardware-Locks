@@ -16,11 +16,9 @@ __thread int mySlot ;
 
 void init(Lock* self){
     self->flags = malloc(sizeof(bool)*omp_get_max_threads());
-    printf("number of threads = %i \n", omp_get_max_threads());
     for (int i=0; i<omp_get_max_threads(); i++) { self->flags[i] = false; }
     self->flags[0] = true;
     atomic_store(&self->tail, 0);   
-    for (int i=0; i<omp_get_max_threads(); i++) { printf("thread %i has flag %i \n", i, self->flags[i]); }
 }
 
 void lock(Lock* self) {
