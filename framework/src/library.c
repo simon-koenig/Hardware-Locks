@@ -72,7 +72,7 @@ struct counters random_bench1(struct one_thread_library* l, int times, int seed)
     for (int i=0; i<times;) {
         // What are we reading today?
         random_r(&rand_state, &choice);
-
+        
         /*
         printf("Thread %d: has %d AMP books and %d C books.\n",\
                tid, herlihy_shavit_luchangco_spear, kernigham_ritchie);

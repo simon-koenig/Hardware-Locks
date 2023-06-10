@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "atomic": "c"
+        "atomic": "c",
+        "stdio.h": "c",
+        "strings.h": "c"
     }
 }

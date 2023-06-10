@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <omp.h>
-#include "../locks/array-lock.c"
+// #include "../locks/TestAndSetLock.c"
+// #include "../locks/TestAndTestAndSetLocks.c"
+// #include "../locks/ArrayLock.c"
+#include "../locks/CLHLock.c" // We choose this lock
+// #include "../locks/MCSLock.c"
+// #include "../locks/HelmLock.c"
+
 
 
 // Lock acquisition troughput benchmark
@@ -10,6 +16,15 @@ double benchmarkLockLatency(int numberOfThreads, unsigned int sampleSize) {
 
     double elapsedSeconds = 0; // Total elapsed Seconds for lock aquisition 
     double longestWait = 0; 
+
+    //
+    // Declare Mutex and Init mutex
+    // 
+
+    Lock LOCK;
+    init(&LOCK);
+
+
 
     // Perform the lock acquisition operation in a loop
     #pragma omp parallel for
@@ -21,7 +36,7 @@ double benchmarkLockLatency(int numberOfThreads, unsigned int sampleSize) {
             // Aquire lock and time 
             // 
             double startTime = omp_get_wtime(); // Start the timer
-            lock();
+            lock(&LOCK);
             double endTime = omp_get_wtime(); // End timer 
 
             double waitTime = endTime - startTime; 
@@ -36,13 +51,19 @@ double benchmarkLockLatency(int numberOfThreads, unsigned int sampleSize) {
             //
             // Release the lock 
             // 
-            unlock();
+            unlock(&LOCK);
             
         }
 
+    //
+    // Destroy the lock 
+    // 
+    
+    destroy(&LOCK);
+
+
     // Calculate average latency 
     double latency = elapsedSeconds/( sampleSize )  ; 
-
 
     // Print the results
     //printf("Total Lock Aquisitions: %d \n", totalLockAcquisitions);

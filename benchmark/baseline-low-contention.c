@@ -12,8 +12,6 @@
 // #include "../locks/MCSLock.c"
 // #include "../locks/HelmLock.c"
 
-
-
 // Lock acquisition troughput benchmark
 double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) {
     // Counter variable to track the total number of lock acquisitions
@@ -21,20 +19,12 @@ double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) 
     // Init shared number storage
     unsigned int sharedGenerator;
     
-    //
-    // Declare Mutex and Init mutex
-    // 
-
-    Lock LOCK;
-    init(&LOCK);
-
 
     // Start the timer
     double startTime = omp_get_wtime();
 
     // Perform the lock acquisition operation in a loop
-    #pragma omp parallel for shared(LOCK ,totalLockAcquisitions)
-
+    #pragma omp parallel for
 
         for (int j=0; j<sampleSize; j++){ // Loop over sampleSize 
 
@@ -45,7 +35,7 @@ double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) 
             // Initilize random number generator with individual local seed 
             unsigned int localSeed = time(NULL) + omp_get_thread_num();
             srand(localSeed);
-             unsigned int nonCriticalValue = rand_r(&localSeed) % 400;
+            unsigned int nonCriticalValue = rand_r(&localSeed) % 400;
             for (unsigned int j = 0; j < nonCriticalValue; ++j) {
                 rand_r(&localSeed);
             }
@@ -54,7 +44,8 @@ double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) 
             // Aquire lock 
             // 
 
-            lock(&LOCK); 
+            #pragma omp critical
+            {
             //printf("Hej thread = %d aquired the lock \n ",omp_get_thread_num());
 
             //
@@ -71,11 +62,7 @@ double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) 
 
             totalLockAcquisitions++;
 
-            //
-            // Release the lock 
-            // 
-
-            unlock(&LOCK);
+            }
             //printf("Hej thread = %d has unlocked \n ",omp_get_thread_num());
 
             //
@@ -85,13 +72,6 @@ double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) 
             //totalLockAcquisitions++;
         }
     
-
-    //
-    // Destroy the lock 
-    // 
-    
-    destroy(&LOCK);
-
         
     // Calculate the elapsed time
     double endTime = omp_get_wtime();
@@ -127,7 +107,7 @@ int main() {
     // Set the number of threads
     int numThreads[10] = {1,2,3,4,5,8,10,16,32,50};
     // Set sample Size
-    unsigned int sampleSize = 1e4
+    unsigned int sampleSize = 1e5
     ;
     printf("Lock Acquisitions:  %i \n", sampleSize);
 
@@ -136,6 +116,7 @@ int main() {
         omp_set_num_threads(numThreads[i]);
         printf("Number of threads %i \n", numThreads[i]);
         averageBench(numThreads[i],sampleSize);
+
     }
 
     return 0;
