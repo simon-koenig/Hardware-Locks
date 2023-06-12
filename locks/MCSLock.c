@@ -7,21 +7,22 @@
 
 typedef struct node{
    _Atomic bool locked;
-   char padding[64];
    struct node* next;
+   char padding[64];
 } node;
 
 typedef struct Lock{
-   struct node* mynode;
    _Atomic (struct node*) head;
 } Lock;
+
+static __thread struct node mynode = {0, (struct node*) NULL, ""};
 
 void init(struct Lock* self){
    atomic_store(&self->head, (struct node*) NULL);   
 }
 
 void lock(struct Lock* self){
-    struct node* n = (struct node*)malloc(sizeof(struct node));
+    struct node* n = &mynode;
     atomic_store(&n->next, (struct node*) NULL);
     struct node* pred = atomic_exchange(&self->head, n);
 
@@ -29,26 +30,21 @@ void lock(struct Lock* self){
         atomic_store(&n->locked, 1);   
         pred->next = n;
         while (atomic_load(&n->locked));
-    } else {
-        self->mynode = n;
     }
 }
 
 void unlock(struct Lock* self)
 {
-    struct node* n = self->mynode;
+    struct node* n = &mynode;
     if (n->next == (struct node*) NULL){
         if (atomic_compare_exchange_strong(&self->head, &n, (struct node*) NULL)) {
-            free(n);
             return;
         }
-        n = self->mynode;
+        n = &mynode;
         while (n->next == (struct node*) NULL);
     }
     atomic_store(&n->next->locked, 0);
-    self->mynode = n->next;
     n->next = (struct node*) NULL;
-    free(n);
 }
 
 void destroy(struct Lock* self){

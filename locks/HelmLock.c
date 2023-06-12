@@ -10,43 +10,40 @@ typedef struct node{
 } node;
 
 typedef struct Lock{
-   _Atomic struct node* mynode;
    _Atomic struct node* tail;
 } Lock;
 
+__thread struct node mynode = {(_Atomic struct Lock*) NULL};
+
 void init(struct Lock* self){
    atomic_store(&self->tail, (_Atomic struct node*) NULL); 
-   atomic_store(&self->mynode, (_Atomic struct node*) NULL);
 }
 
 void lock(struct Lock* self){
-    struct node* n = (struct node*)malloc(sizeof(struct node));
+    struct node* n = &mynode;
     atomic_store(&n->Grant, (_Atomic struct Lock*) NULL); 
     struct node* pred = (struct node*) atomic_exchange(&self->tail, (_Atomic struct node*) n);
 
     if (pred != (struct node*) NULL) {
-        while (atomic_load(&pred->Grant) != (_Atomic struct Lock*) self);
+        while (__sync_val_compare_and_swap(&pred->Grant, self, (_Atomic struct Lock*) NULL) != (_Atomic struct Lock*) self) {};
         atomic_store(&pred->Grant, (_Atomic struct Lock*) NULL);
     }
-    atomic_store(&self->mynode, (_Atomic struct node*) n);
 }
 
 void unlock(struct Lock* self)
 {
-    struct node* n = (struct node*) atomic_load(&self->mynode);
-    atomic_store(&n->Grant, (_Atomic struct Lock*) NULL); 
-    struct node* pred = (struct node*) atomic_load(&self->tail);
+    struct node* n = &mynode;
+    //atomic_store(&n->Grant, (_Atomic struct Lock*) NULL);
+    struct node* pred = (struct node*) __sync_val_compare_and_swap(&self->tail, (_Atomic struct node*) n, (_Atomic struct node*) NULL);
 
     if (pred != n){
         atomic_store(&n->Grant, (_Atomic struct Lock*) self);
         while(atomic_load(&n->Grant) != (_Atomic struct Lock*) NULL);
     }
-    free(n);
 }
 
 void destroy(struct Lock* self){
    atomic_store(&self->tail, (_Atomic struct node*) NULL); 
-   atomic_store(&self->mynode, (_Atomic struct node*) NULL);
 }
 
 
