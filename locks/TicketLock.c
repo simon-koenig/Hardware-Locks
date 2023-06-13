@@ -25,4 +25,6 @@ void unlock(Lock* self) {
 }
 
 void destroy(Lock* self) {
+    self->ticket = 0;
+    self->served = 0;
 }
