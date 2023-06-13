@@ -22,5 +22,5 @@ void unlock(Lock* self) {
 }
 
 void destroy(Lock* self){
-    //atomic_store_explicit(&self->lock_flag, 0, memory_order_release);
+    atomic_store_explicit(&self->lock_flag, 0, memory_order_release);
 }
