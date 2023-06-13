@@ -7,8 +7,8 @@
 #include <stdbool.h>
 // #include "../locks/TestAndSetLock.c"
 // #include "../locks/TestAndTestAndSetLocks.c"
-// #include "../locks/ArrayLock.c"
-#include "../locks/CLHLock.c" // We choose this lock
+#include "../locks/ArrayLock.c"
+//#include "../locks/CLHLock.c" // We choose this lock
 // #include "../locks/MCSLock.c"
 // #include "../locks/HelmLock.c"
 
@@ -20,6 +20,8 @@ double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) 
     int totalLockAcquisitions = 0;
     // Init shared number storage
     unsigned int sharedGenerator;
+    // Init local number Storage 
+    unsigned int randomSteps = 0;
     
     //
     // Declare Mutex and Init mutex
@@ -42,11 +44,10 @@ double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) 
             // Delay each thread randomly 
             //
 
-            // Initilize random number generator with individual local seed 
             unsigned int localSeed = time(NULL) + omp_get_thread_num();
             srand(localSeed);
-             unsigned int nonCriticalValue = rand_r(&localSeed) % 400;
-            for (unsigned int j = 0; j < nonCriticalValue; ++j) {
+            unsigned int localSteps = rand_r(&localSeed) % 20;
+            for (unsigned int j = 0; j < localSteps; ++j) {
                 rand_r(&localSeed);
             }
 
@@ -70,6 +71,7 @@ double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) 
             }
 
             totalLockAcquisitions++;
+            //randomSteps += localSteps;
 
             //
             // Release the lock 
@@ -98,11 +100,12 @@ double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) 
     double elapsedSeconds = endTime - startTime;
 
     // Calculate the throughput
-    double throughput = ( totalLockAcquisitions) / elapsedSeconds;
+    //double throughput = ( totalLockAcquisitions * randomSteps) / elapsedSeconds;
+    double throughput = (totalLockAcquisitions) / elapsedSeconds;
 
     // Print the results
     //printf("Total Lock Aquisitions: %d \n", totalLockAcquisitions);
-    //printf("Throughput: %.6f operations per second\n", throughput);
+    printf("Throughput: %.6f operations per second\n", throughput);
 
     return throughput;
 }
@@ -127,8 +130,7 @@ int main() {
     // Set the number of threads
     int numThreads[10] = {1,2,3,4,5,8,10,16,32,50};
     // Set sample Size
-    unsigned int sampleSize = 1e4
-    ;
+    unsigned int sampleSize = 1e4;
     printf("Lock Acquisitions:  %i \n", sampleSize);
 
     // Run the benchmark
@@ -137,6 +139,5 @@ int main() {
         printf("Number of threads %i \n", numThreads[i]);
         averageBench(numThreads[i],sampleSize);
     }
-
     return 0;
 }
