@@ -82,18 +82,22 @@ double benchmarkLockHighContention(int numberOfThreads, unsigned int sampleSize)
 }
 
 
-void averageBench(int numThreads,unsigned int sampleSize){
+void medianBench(int numThreads,unsigned int sampleSize){
 
-    double averageThroughput = 0.0;
-    unsigned int times = 5;
+     unsigned int times = 5;
+    double throughputMeasurements[times];
+
     for (size_t i=0; i<times; i++){
-        averageThroughput += benchmarkLockHighContention(numThreads,sampleSize);
+        throughputMeasurements[i] = benchmarkLockLowContention(numThreads,sampleSize);
+        printf("Throughput: %.6f operations per second\n", throughputMeasurements[i]); 
     }
-    averageThroughput = averageThroughput/times;
 
-    printf("Average Throughput: %.6f operations per second\n", averageThroughput); 
-    
+    qsort(throughputMeasurements,times ,sizeof(double), compare);  
+    double medianThroughput = throughputMeasurements[times/2];
+
+    printf("Median Throughput: %.6f operations per second\n", medianThroughput); 
 }
+
 
 
 int main() {
@@ -106,7 +110,7 @@ int main() {
     for(size_t i=0;i<10;i++){
         omp_set_num_threads(numThreads[i]);
         printf("Number of threads %i \n", numThreads[i]);
-        averageBench(numThreads[i],sampleSize);
+        medianBench(numThreads[i],sampleSize);
     }
     return 0;
 }

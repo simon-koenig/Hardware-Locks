@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#define SIZE omp_get_max_threads()
+
 typedef struct Lock {
   bool* flags;
   // Making an atomic counter
@@ -15,9 +17,8 @@ typedef struct Lock {
 __thread int mySlot;
 
 
-
 void init(Lock* self){
-    self->flags = malloc(sizeof(bool) * omp_get_max_threads());
+    self->flags = malloc(sizeof(bool) * SIZE );
     for (int i=1; i<omp_get_max_threads(); i++) { self->flags[i] = false; }
     //self->flags[0] = true;
     atomic_store_explicit(&self->flags[0], true, memory_order_relaxed);
@@ -26,7 +27,7 @@ void init(Lock* self){
 
 
 void lock(Lock* self) {
-    mySlot = atomic_fetch_add(&self->tail, 1) % omp_get_max_threads();
+    mySlot = atomic_fetch_add(&self->tail, 1) % SIZE;
     
     while (!self->flags[mySlot]) {
         // Wait until the flag at mySlot is set to true
@@ -35,7 +36,8 @@ void lock(Lock* self) {
 
 void unlock(Lock* self) {
     self->flags[mySlot] = false;
-    self->flags[(mySlot + 1) % omp_get_max_threads()] = true;
+    self->flags[(mySlot + 1) % 
+    SIZE] = true;
 }
 
 

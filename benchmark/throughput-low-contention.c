@@ -8,7 +8,7 @@
 // #include "../locks/TestAndSetLock.c"
 // #include "../locks/TestAndTestAndSetLocks.c"
 #include "../locks/ArrayLock.c"
-//#include "../locks/CLHLock.c" // We choose this lock
+// #include "../locks/CLHLock.c" // We choose this lock
 // #include "../locks/MCSLock.c"
 // #include "../locks/HelmLock.c"
 
@@ -101,28 +101,38 @@ double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) 
 
     // Calculate the throughput
     //double throughput = ( totalLockAcquisitions * randomSteps) / elapsedSeconds;
-    double throughput = (totalLockAcquisitions) / elapsedSeconds;
+    double throughput = (totalLockAcquisitions * 5) / elapsedSeconds;
 
     // Print the results
     //printf("Total Lock Aquisitions: %d \n", totalLockAcquisitions);
-    printf("Throughput: %.6f operations per second\n", throughput);
+    //printf("Throughput: %.6f operations per second\n", throughput);
 
     return throughput;
 }
 
+int compare(const void *a,const void *b) {
+    double *x = (double *) a;
+    double *y = (double *) b;
+    // return *x - *y; // this is WRONG...
+    if (*x < *y) return -1;
+    else if (*x > *y) return 1; 
+    else return 0;
+}
 
-void averageBench(int numThreads,unsigned int sampleSize){
+void medianBench(int numThreads,unsigned int sampleSize){
 
-    double averageThroughput = 0.0;
-    unsigned int times = 5;
+     unsigned int times = 5;
+    double throughputMeasurements[times];
 
     for (size_t i=0; i<times; i++){
-        averageThroughput += benchmarkLockLowContention(numThreads,sampleSize);
+        throughputMeasurements[i] = benchmarkLockLowContention(numThreads,sampleSize);
+        //printf("Throughput: %.6f operations per second\n", throughputMeasurements[i]); 
     }
 
-    averageThroughput = averageThroughput/times;
+    qsort(throughputMeasurements,times ,sizeof(double), compare);  
+    double medianThroughput = throughputMeasurements[times/2];
 
-    printf("Average Throughput: %.6f operations per second\n", averageThroughput); 
+    printf("Median Throughput: %.6f operations per second\n", medianThroughput); 
 }
 
 
@@ -137,7 +147,7 @@ int main() {
     for(size_t i=0;i<10;i++){
         omp_set_num_threads(numThreads[i]);
         printf("Number of threads %i \n", numThreads[i]);
-        averageBench(numThreads[i],sampleSize);
+        medianBench(numThreads[i],sampleSize);
     }
     return 0;
 }
