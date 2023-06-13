@@ -1,7 +1,7 @@
 # This is a comment line
 CC=gcc
 
-correctness: correctness/CorrectnessTest.c
+correctnessTest: correctness/CorrectnessTest.c
 	@echo "Testing correctness for $(lock):\n"
 	@${CC} correctness/CorrectnessTest.c -o build/test -fopenmp -include locks/$(lock).c
 	@./build/test $(thread_number) $(array_size)
