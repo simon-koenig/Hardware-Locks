@@ -1,7 +1,9 @@
-#include <omp.h>
 #include <stdatomic.h>
 #include <unistd.h>
+#include <omp.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 typedef struct Lock {
 atomic_bool lock_flag;

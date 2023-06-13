@@ -1,8 +1,9 @@
 #include <stdatomic.h>
 #include <unistd.h>
 #include <omp.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 typedef struct Lock {
 atomic_bool lock_flag;
@@ -21,5 +22,5 @@ void unlock(Lock* self) {
 }
 
 void destroy(Lock* self){
-    atomic_store_explicit(&self->lock_flag, 0, memory_order_release);
+    //atomic_store_explicit(&self->lock_flag, 0, memory_order_release);
 }

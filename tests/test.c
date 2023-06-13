@@ -4,7 +4,7 @@
 
 #include <stdlib.h>
 
-#define ARRAY_SIZE 8
+#define ARRAY_SIZE 100
 
 int main() {
 
@@ -14,7 +14,7 @@ int main() {
     Lock LOCK;
     init(&LOCK);
 
-    int counter = 0;
+    _Atomic int counter = 0;
     float array_sum_seqential = 0, array_sum_parallel = 0;
 
     // generate random array + sum it up sequentially
@@ -32,15 +32,17 @@ int main() {
         printf("%d \n", omp_get_thread_num());
         
         // sum parallel
-        //while(counter < 1 * ARRAY_SIZE){
+        while(counter < 1 * ARRAY_SIZE){
             lock(&LOCK);
-            //printf("\n%d", omp_get_thread_num());
-            array_sum_parallel = array_sum_parallel + array[counter];
-            usleep(10 * microsecond);
-            //printf("\t%d", counter);
             counter = counter + 1;
+            //printf("\n%d", omp_get_thread_num());
+            //usleep(10 * microsecond);
+            array_sum_parallel = array_sum_parallel + array[counter-1];
+
+            printf("\t%d", counter);
+            
             unlock(&LOCK);
-        //}
+        }
     }
 
     destroy(&LOCK);
