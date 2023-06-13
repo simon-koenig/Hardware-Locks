@@ -3,6 +3,8 @@
         "atomic": "c",
         "stdio.h": "c",
         "strings.h": "c",
-        "stdatomic.h": "c"
+        "stdatomic.h": "c",
+        "src": "cpp",
+        "stdlib.h": "c"
     }
 }
