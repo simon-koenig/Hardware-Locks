@@ -7,3 +7,7 @@ correctness: correctness/CorrectnessTest.c
 	@./build/test $(thread_number) $(array_size)
 	@rm build/test
 
+.PHONY: clean
+
+clean:
+	rm build/*
