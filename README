@@ -39,11 +39,11 @@ One can specify the following variables for correctness and the different benchm
 * **correctnessTest**: thread_number, array_size
 * **latency**: thread_number, ???
 * **throughput**: thread_number, ???
-* **fairness**: thread_number, reps, acquisations, filename
+* **fairness**: thread_number, reps, acquisitions, filename
 
 
 e.g. for fairness:
 ```sh
-$ make execute thread_number=12 reps=10 acquisations=100 filename=TestAndSet
+$ make execute thread_number=12 reps=10 acquisitions=100 filename=TestAndSet
 ```
 

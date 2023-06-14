@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import sys
 
 lock = str(sys.argv[1])
-with open('test.txt') as f:
+with open('build/fairness_data.txt') as f:
     _ = f.readline()
     _, threads = f.readline().split(",")
     threads = int(threads)
@@ -24,4 +24,4 @@ _ = plt.bar(x=range(1, threads+1), height=data, bottom=0)
 plt.xlabel("Thread ID")
 plt.ylabel("Number of lock acquisations")
 
-plt.savefig(lock + "_" + str(threads) + "_" + str(acqus) + "_" + str(reps) + ".svg")
+plt.savefig("plots/" + lock + "_" + str(threads) + "_" + str(acqus) + "_" + str(reps) + ".svg")
