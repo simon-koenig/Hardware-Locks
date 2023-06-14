@@ -1,1 +1,50 @@
 Project about Hardware Locks for "Advanced Multiprocessor Programming", summer term 2023 at TU WIEN. 
+
+Project about Hardware Locks for "Advanced Multiprocessor Programming", summer term 2023 at TU WIEN. 
+
+# Usage
+
+Compilation is dependent on the lock we want to use. Therefore, compilation is done with the following commands:
+
+### Correctness:
+
+```sh
+$ make correctness lock=<lockname>
+```
+e.g.:
+```sh
+$ make correctness lock=TicketLock
+```
+
+### Benchmarks:
+
+```sh
+$ make throughput lock=<lockname>
+```
+```sh
+$ make latency lock=<lockname>
+```
+```sh
+$ make fairness lock=<lockname>
+```
+e.g.:
+```sh
+$ make fairness lock=TestAndSet
+```
+
+## Execution:
+```sh
+$ make execute 
+```
+One can specify the following variables for correctness and the different benchmarks (otherwise it takes default values):
+* Correctness: thread_number, array_size
+* Latency: thread_number, ???
+* Throughput: thread_number, ???
+* Fairness: thread_number, reps, acquisations, filename
+
+
+e.g. for fairness:
+```sh
+$ make execute thread_number=12 reps=10 acquisations=100 filename=TestAndSet
+```
+
