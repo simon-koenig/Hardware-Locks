@@ -35,8 +35,8 @@ int main (int argc, char *argv[]){
 
     int thread_number = atoi(argv[1]);
     omp_set_num_threads(thread_number);
-    int reps = atoi(argv[3]);
-    int max_lock_calls = atoi(argv[4]);
+    int reps = atoi(argv[2]);
+    int max_lock_calls = atoi(argv[3]);
     //char* filename = argv[4];
     char* filename = "build/fairness_data.txt";
 
