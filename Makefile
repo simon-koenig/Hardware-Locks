@@ -14,11 +14,11 @@ server?=srun -p q_student --time=1:00 -N 1 -c 64
 # run local by specifying variable server as empty (server="")
 correctnessTest: correctness/CorrectnessTest.c
 	${CC} correctness/CorrectnessTest.c -o build/x -fopenmp -include locks/$(lock).c
-	$(server)./build/x $(thread_number) $(array_size)
+	$(server) ./build/x $(thread_number) $(array_size)
 
 fairnessBench: benchmark/fairness.c
 	${CC} benchmark/fairness.c -o build/x -fopenmp -include locks/$(lock).c
-	$(server)./build/x $(thread_number) $(reps) $(acquisitions)
+	$(server) ./build/x $(thread_number) $(reps) $(acquisitions)
 
 latencyBench: benchmark/latency.c
 
