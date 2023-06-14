@@ -24,7 +24,6 @@ typedef struct Lock
 
 } Lock;
 
-static __thread struct Node mynode = {0,(struct Node*) NULL};
 
 
 static Node * clh_create_node(bool islocked)

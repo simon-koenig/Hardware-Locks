@@ -1,27 +1,43 @@
 #include <stdio.h>
 #include <omp.h>
 #include <stdlib.h>
-// #include "../locks/TestAndSetLock.c"
-// #include "../locks/TestAndTestAndSetLock.c"
-//#include "../locks/ArrayLock.c"
-// #include "../locks/CLHLock.c" // We choose this lock
-// #include "../locks/MCSLock.c"
-// #include "../locks/HelmLock.c"
-#include "../locks/Baseline.c"
-#include "./src"
+#include "./src.c"
 
 
-int main() {
+
+int main(int argc, char *argv[]) {
     // Set the number of threads
     int numThreads[10] = {1,2,3,4,5,8,10,16,32,50};
-    // Set sample Size
-    unsigned int sampleSize = 1e4;
+
+    if (argc != 4) {
+        printf("ERROR: Programm needs three input parameter: \n");
+        printf("threads, sampleSize, repetitions \n");
+        exit(EXIT_FAILURE);
+    }
+
+    //int dummyThreads = atoi(argv[1]);
+    int sampleSize = atoi(argv[2]);
+    int reps = atoi(argv[3]);
+
+    // Print sampleSize
     printf("Lock Acquisitions:  %i \n", sampleSize);
+
+    //
     // Run the benchmark
+    // 
+
+    double resultArray[10]; 
     for(size_t i=0;i<10;i++){
         omp_set_num_threads(numThreads[i]);
         printf("Number of threads %i \n", numThreads[i]);
-        medianBenchHighContention(numThreads[i],sampleSize);
+        resultArray[i] = medianBenchHighContention(sampleSize, reps);
     }
+
+
+    char* filename = "TPHighContention.txt";
+ 
+
+    writeThroughputArrayToFile(numThreads,resultArray, 10, filename, sampleSize, reps);
+
     return 0;
 }
