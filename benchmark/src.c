@@ -16,8 +16,8 @@ int compareDoubles(const void *a,const void *b) {
 }
 
 
-// Low Contention Baseline
-double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) {
+// Low Contention Benchmark
+double benchmarkLockLowContention(int sampleSize) {
     // Counter variable to track the total number of lock acquisitions
     int totalLockAcquisitions = 0;
     // Init shared number storage
@@ -52,6 +52,7 @@ double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) 
                 rand_r(&localSeed);
             }
 
+
             //
             // Aquire lock 
             // 
@@ -67,7 +68,7 @@ double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) 
             // A short or empty critical section leads to high contention
             
             // Advance global random number generator in critical section
-            for (unsigned int i = 0; i < 5; i++) {
+            for (int i = 0; i < 5; i++) {
                 rand_r(&sharedGenerator);
             }
 
@@ -111,13 +112,13 @@ double benchmarkLockLowContention(int numberOfThreads, unsigned int sampleSize) 
     return throughput;
 }
 
-void medianBenchLowContention(int numThreads,unsigned int sampleSize){
-
-     unsigned int times = 5;
+double
+ medianBenchLowContention(int sampleSize, int times){
+    // Init measurement array
     double throughputMeasurements[times];
 
-    for (size_t i=0; i<times; i++){
-        throughputMeasurements[i] = benchmarkLockLowContention(numThreads,sampleSize);
+    for (int i=0; i<times; i++){
+        throughputMeasurements[i] = benchmarkLockLowContention(sampleSize);
         //printf("Throughput: %.6f operations per second\n", throughputMeasurements[i]); 
     }
 
@@ -125,10 +126,12 @@ void medianBenchLowContention(int numThreads,unsigned int sampleSize){
     double medianThroughput = throughputMeasurements[times/2];
 
     printf("Median Throughput: %.6f operations per second\n", medianThroughput); 
+
+    return medianThroughput;
 }
 
 // High Contention Benchmark 
-double benchmarkLockHighContention(int numberOfThreads, unsigned int sampleSize) {
+double benchmarkLockHighContention(int sampleSize) {
     // Barrier to force OMP to start all threads at the same time
     #pragma omp barrier
     // Counter variable to track the total number of lock acquisitions
@@ -201,13 +204,13 @@ double benchmarkLockHighContention(int numberOfThreads, unsigned int sampleSize)
     return throughput;
 }
 
-void medianBenchHighContention(int numThreads,unsigned int sampleSize){
+double medianBenchHighContention(int sampleSize,int times){
 
-    unsigned int times = 5;
+   // Init measurement array 
     double throughputMeasurements[times];
 
-    for (size_t i=0; i<times; i++){
-        throughputMeasurements[i] = benchmarkLockHighContention(numThreads,sampleSize);
+    for (int i=0; i<times; i++){
+        throughputMeasurements[i] = benchmarkLockHighContention(sampleSize);
        // printf("Throughput: %.6f operations per second\n", throughputMeasurements[i]); 
     }
 
@@ -215,5 +218,124 @@ void medianBenchHighContention(int numThreads,unsigned int sampleSize){
     double medianThroughput = throughputMeasurements[times/2];
 
     printf("Median Throughput: %.6f operations per second\n", medianThroughput); 
+    
+    return medianThroughput;
 }
 
+// Latency Benchmark
+double benchmarkLockLatency(int sampleSize) {
+    // Barrier to force OMP to start all threads at the same time
+    #pragma omp barrier
+
+    double elapsedSeconds = 0; // Total elapsed Seconds for lock aquisition 
+    double longestWait = 0; 
+
+    //
+    // Declare Mutex and Init mutex
+    // 
+
+    Lock LOCK;
+    init(&LOCK);
+
+
+    // Perform the lock acquisition operation in a loop
+    #pragma omp parallel for
+    
+    // Each thread performs the lock acquisition operation
+        // A sampleSize number of times  
+        for (int j=0; j<sampleSize; j++){
+            //
+            // Aquire lock and time 
+            // 
+            double startTime = omp_get_wtime(); // Start the timer
+            lock(&LOCK);
+            double endTime = omp_get_wtime(); // End timer 
+
+            double waitTime = endTime - startTime; 
+
+            elapsedSeconds += waitTime; // Add to the the elapsed time
+
+            if (waitTime > longestWait){ longestWait = waitTime;}; // Update longest Wait if necessary 
+
+            // Critical section is empty since we just measure lock aquisition latency
+
+            //
+            // Release the lock 
+            // 
+            unlock(&LOCK);
+            
+        }
+
+    //
+    // Destroy the lock 
+    // 
+    
+    destroy(&LOCK);
+
+
+    // Calculate average latency 
+    double latency = elapsedSeconds/( sampleSize )  ; 
+
+    // Print the results
+    //printf("Total Lock Aquisitions: %d \n", totalLockAcquisitions);
+    printf("Longest Wait : %.10f ns\n", longestWait*1e9);
+
+    return latency;
+}
+
+// Latency Benchmark
+double medianBenchLatency(int sampleSize, int times){
+    // Init measurement array
+    double LatencyMeasurements[times];
+
+    for (int i=0; i<times; i++){
+        LatencyMeasurements[i] = benchmarkLockLatency(sampleSize);
+       // printf("Throughput: %.6f operations per second\n", throughputMeasurements[i]); 
+    }
+
+    qsort(LatencyMeasurements,times ,sizeof(double), compareDoubles);  
+    double medianLatency = LatencyMeasurements[times/2];
+
+    printf("Median Latency: %.6f us \n", medianLatency * 1e6); 
+    
+    return medianLatency; 
+}
+
+// Helper function for output to text files
+void writeThroughputArrayToFile(int threads[], double tp[], int N, char* filename, int sampleSize, int repetitions)
+{
+    FILE *fp = fopen(filename, "w");
+
+    // store basic information about run
+    fprintf(fp, "--------------------- \n");
+    fprintf(fp, "# sampleSize, %i \n", sampleSize);
+    fprintf(fp, "# repetitions, %i \n", repetitions);
+    fprintf(fp, "--------------------- \n");
+    fprintf(fp, "numberOfThreads, # Throughput [ops/s] \n");    
+
+    // store array
+    for(int i = 0; i<N; i++){
+        fprintf(fp, "%i, %f \n", threads[i] ,tp[i]);
+    }
+    
+    fclose(fp);
+}
+
+void writeLatencyToFile(char* filename, int sampleSize, int repetitions, int numberOfThreads, double latency)
+{
+    FILE *fp = fopen(filename, "w");
+
+    // store basic information about run
+    fprintf(fp, "--------------------- \n");
+    fprintf(fp, "# sampleSize, %i \n", sampleSize);
+    fprintf(fp, "# repetitions, %i \n", repetitions);
+    fprintf(fp, "# numberOfThreads, %i \n",numberOfThreads );
+    fprintf(fp, "--------------------- \n");
+    fprintf(fp, "Latency [ns] \n");    
+
+    // store value
+    fprintf(fp, "%f \n", latency*1e9);
+    
+    
+    fclose(fp);
+}
