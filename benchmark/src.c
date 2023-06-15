@@ -273,7 +273,6 @@ double benchmarkLockLatency(int sampleSize) {
     Lock LOCK;
     init(&LOCK);
 
-
     // Perform the lock acquisition operation in a loop
     #pragma omp parallel for
     
