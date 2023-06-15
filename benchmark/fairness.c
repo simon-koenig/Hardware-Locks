@@ -26,17 +26,19 @@ void writeArrayToFile(double* p, int N, char* filename, int threads, int max_ite
 
 int main (int argc, char *argv[]){
 
-    if (argc != 5) {
+    /*
+    if (argc != 4) {
         printf("ERROR: Programm needs four input parameter: \n");
-        printf("number of threads, number of lock calls, repetitions, filename for results\n");
+        printf("number of threads, number of lock calls, repetitions\n");
         exit(EXIT_FAILURE);
-    }
+    }*/
 
     int thread_number = atoi(argv[1]);
     omp_set_num_threads(thread_number);
-    int max_lock_calls = atoi(argv[2]);
-    int reps = atoi(argv[3]);
-    char* filename = argv[4];
+    int reps = atoi(argv[2]);
+    int max_lock_calls = atoi(argv[3]);
+    //char* filename = argv[4];
+    char* filename = "build/fairness_data.txt";
 
     // Declare Mutex
     Lock LOCK;

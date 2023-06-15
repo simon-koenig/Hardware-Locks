@@ -4,34 +4,23 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <threads.h>
 
 // Source: Ideas from http://concurrencyfreaks.blogspot.com/2014/05/exchg-mutex-alternative-to-mcs-lock.html
 
 typedef struct Node
 {
-    _Atomic bool succ_must_wait;
-    struct Node* prev;
+    _Atomic char succ_must_wait;
 
 } Node;
 
+static __thread struct Node MyNode = {1};
 
-typedef struct Lock
+typedef struct
 {
-    Node * mynode;
-    _Atomic (Node *) tail;
     char padding[64];  // To avoid false sharing with the tail
-
+    _Atomic (Node *) tail;
 } Lock;
 
-
-
-static Node * clh_create_node(bool islocked)
-{
-    Node * new_node = (Node *)malloc(sizeof(Node));
-    atomic_store_explicit(&new_node->succ_must_wait, islocked, memory_order_relaxed); // Sets the value of succ_must_wait to either 0 (no wait) or 1 (must wait)
-    return new_node;
-}
 
 /*
  * Initializes the mutex, creating a sentinel node.
@@ -41,8 +30,8 @@ static Node * clh_create_node(bool islocked)
 void init(Lock * self)
 {
     // We create the first sentinel node unlocked, with islocked=0
-    Node * node = clh_create_node(0);
-    self->mynode = node;
+    Node node_ = {0};
+    Node* node = &node_;
     atomic_store(&self->tail, node);
 }
 
@@ -56,7 +45,7 @@ void init(Lock * self)
  */
 void destroy(Lock * self)
 {
-    free(atomic_load(&self->tail));
+    atomic_store(&self->tail, (Node*) NULL);
 }
 
 
@@ -69,27 +58,16 @@ void destroy(Lock * self)
 void lock(Lock * self)
 {
     // Create the new node locked by default, setting islocked=1
-    Node *mynode = clh_create_node(1); // My own node 
-    //mynode->prev = atomic_exchange(&self->tail, mynode); // Previous node 
+    Node *mynode = &MyNode; // My own node 
     Node *prev = atomic_exchange(&self->tail, mynode); // Previous node 
 
     // This thread's node is now in the queue, so wait until it is its turn
-    char prev_is_locked = atomic_load_explicit(&prev->succ_must_wait, memory_order_relaxed); // The previous node has either 0 (no wait) or 1 (must wait) in succ_must_wait
-    if (prev_is_locked) { // If prev_islocked == 1, then wait 
-        while (prev_is_locked){
-        // while (atomic_load(&mynode->prev->succ_must_wait)) {
-            thrd_yield();
-            prev_is_locked = atomic_load(&prev->succ_must_wait); // Check whether I have progressed to front of queue 
+    char prev_islocked = atomic_load_explicit(&prev->succ_must_wait, memory_order_relaxed); // The previous node has either 0 (no wait) or 1 (must wait) in succ_must_wait
+    if (prev_islocked) { // If prev_islocke == 1, then wait 
+        while (prev_islocked) {
+            prev_islocked = atomic_load(&prev->succ_must_wait); // Check whether I have progressed to front of queue 
         }
     }
-    
-    // This thread has acquired the lock on the mutex and it is now safe to
-    // cleanup the memory of the previous node.
-    
-    free(prev);
-
-    // Could maybe replace this with a thread local variable 
-    self->mynode = mynode; // This is set for later unlock()
 }
 
 
@@ -100,12 +78,6 @@ void lock(Lock * self)
  */
 void unlock(Lock * self)
 {
-    // We assume that if this function was called, it is because this thread is
-    // currently holding the lock, which means that self->mynode is pointing to
-    // the current thread's mynode.
-   if (self->mynode == NULL) {
-        // ERROR: This will occur if unlock() is called without a lock()
-        return;
-    }
-    atomic_store(&self->mynode->succ_must_wait, 0);
+    Node *mynode = &MyNode; // My own node 
+    atomic_store(&mynode->succ_must_wait, 0);
 }
