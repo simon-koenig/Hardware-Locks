@@ -1,0 +1,8 @@
+Lock name: IncorrectLock
+Thread number: 8
+Array size: 100000
+--------------------------------------------
+Sequential sum:	49986.6719
+Parallel sum:	30525.8145
+--------------------------------------------
+Sums of arrays not equal - correctness violated!!!

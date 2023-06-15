@@ -2,48 +2,31 @@ Project about Hardware Locks for "Advanced Multiprocessor Programming", summer t
 
 # Usage
 
-Compiling is dependent on the lock we want to use. Therefore, compilation is done with the following commands:
+Compilation and execution is done with the following commands:
 
 ### Correctness:
 
 ```sh
-$ make correctnessTest lock=<lockname>
+$ make correctnessTest lock=... thread_number=... array_size=...
 ```
 e.g.:
 ```sh
-$ make correctnessTest lock=TicketLock
+$ make correctnessTest lock=TicketLock thread_number=30 array_size=10000
 ```
 
 ### Benchmarks:
 
 ```sh
-$ make throughput lock=<lockname>
+$ make fairness lock=... thread_number=... reps=... acquisitions=...
 ```
 ```sh
-$ make latency lock=<lockname>
+$ make throughput lock=...
 ```
 ```sh
-$ make fairness lock=<lockname>
+$ make latency lock=...
 ```
 e.g.:
 ```sh
-$ make fairness lock=TestAndSet
-```
-
-## Execution:
-After compiling we can execute the executable with the following:
-```sh
-$ make execute 
-```
-One can specify the following variables for correctness and the different benchmarks (otherwise it takes default values):
-* **correctnessTest**: thread_number, array_size
-* **latency**: thread_number, ???
-* **throughput**: thread_number, ???
-* **fairness**: thread_number, reps, acquisitions, filename
-
-
-e.g. for fairness:
-```sh
-$ make execute thread_number=12 reps=10 acquisitions=100 filename=TestAndSet
+$ make fairness lock=TestAndSet thread_number=20 reps=10 acquisitions=10000
 ```
 
