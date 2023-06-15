@@ -1,0 +1,8 @@
+Lock name: HemLock
+Thread number: 8
+Array size: 100000
+--------------------------------------------
+Sequential sum:	49986.6719
+Parallel sum:	49986.6719
+--------------------------------------------
+No violations in correctness found.
