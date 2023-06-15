@@ -2,6 +2,9 @@
 CC=gcc
 CFLAGS= -pedantic -Wall -Wextra -fsanitize=address -lm
 LOCKS = BaselineLock TestAndSetLock TestAndTestAndSetLock TicketLock ArrayLock CLHLock MCSLock HemLock
+sampleSize = 10000
+repetitions = 10
+threads = 16
 
 latency: latency.c 
 	@for lock in $(LOCKS) ; do \
@@ -16,7 +19,6 @@ tp-high-contention: tp-high-contention.c
 		echo "Measuring throughput high contention. Lock= $$lock \n" ; \
 		${CC} $^ -o $@ -fopenmp -include ../locks/$$lock.c ${CFLAGS} ; \
 		./$@ $(threads) $(sampleSize) $(repetitions) $$lock ; \
-		
 	done
 	
 tp-low-contention: tp-low-contention.c 
@@ -34,8 +36,6 @@ plotTPLow:
 
 plotLatency:
 	python3 plotLatency.py
-
-
 
 
 
