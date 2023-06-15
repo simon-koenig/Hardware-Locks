@@ -6,15 +6,16 @@
 #include <time.h>
 #include <stdbool.h>
 #include "./src.c"
+#include <string.h>
 
 
 int main(int argc, char *argv[]) {
     // Set the number of threads
     int numThreads[10] = {1,2,3,4,5,8,10,16,32,50};
 
-    if (argc != 4) {
-        printf("ERROR: Programm needs three input parameter: \n");
-        printf("threads, sampleSize, repetitions \n");
+    if (argc != 5) {
+        printf("ERROR: Programm needs four input parameter: \n");
+        printf("threads, sampleSize, repetitions, lock\n");
         exit(EXIT_FAILURE);
     }
 
@@ -24,22 +25,25 @@ int main(int argc, char *argv[]) {
     int reps = atoi(argv[3]);
 
     // Print sampleSize
-    printf("Lock Acquisitions:  %i \n", sampleSize);
+    // printf("Lock Acquisitions:  %i \n", sampleSize);
 
     //
     // Run the benchmark
     // 
 
-    double resultArray[10]; 
+    Stats resultArray[10]; 
     for(size_t i=0;i<10;i++){
         omp_set_num_threads(numThreads[i]);
-        printf("Number of threads %i \n", numThreads[i]);
-        resultArray[i] = medianBenchLowContention(sampleSize, reps);
-    }
+        // printf("Number of threads %i \n", numThreads[i]);
+        resultArray[i] = dataBenchLowContention(sampleSize, reps);
+    }   
 
-
-    char* filename = "TPLowContention.txt";
- 
+     // Write to outfile
+    char *lockName = argv[4];
+    char filename[100] = "TPLowContention";
+    strcat(filename,lockName);
+    strcat(filename,".txt");
+    
 
     writeThroughputArrayToFile(numThreads,resultArray, 10, filename, sampleSize, reps);
 

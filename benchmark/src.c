@@ -1,19 +1,39 @@
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
+
 
 // 
 // Source code
 // 
 
+// Struct to save average and standard Deviation
+typedef struct {
+    double average;
+    double stdDeviation;
+} Stats;
+
+double standardDeviation(double array[],double mean, int times){
+    double squaredSum = 0.0; 
+    for (int i = 0; i < times; i++) {
+        double diff = array[i] - mean;
+        squaredSum += diff * diff;
+    }
+
+    double stdDev = sqrt(squaredSum/times);
+    return stdDev;
+
+}
 
 // Helper Function for median calculation
-int compareDoubles(const void *a,const void *b) {
+/* int compareDoubles(const void *a,const void *b) {
     double *x = (double *) a;
     double *y = (double *) b;
     if (*x < *y) return -1;
     else if (*x > *y) return 1; 
     else return 0;
 }
+*/
 
 
 // Low Contention Benchmark
@@ -112,22 +132,30 @@ double benchmarkLockLowContention(int sampleSize) {
     return throughput;
 }
 
-double
- medianBenchLowContention(int sampleSize, int times){
-    // Init measurement array
+Stats dataBenchLowContention(int sampleSize, int times){
+    // Init data struct
+    Stats data;
     double throughputMeasurements[times];
-
+    double sum; 
     for (int i=0; i<times; i++){
-        throughputMeasurements[i] = benchmarkLockLowContention(sampleSize);
+        double value = benchmarkLockLowContention(sampleSize);
+        throughputMeasurements[i] = value;
+        sum += value;
         //printf("Throughput: %.6f operations per second\n", throughputMeasurements[i]); 
     }
 
-    qsort(throughputMeasurements,times ,sizeof(double), compareDoubles);  
-    double medianThroughput = throughputMeasurements[times/2];
+    //qsort(throughputMeasurements,times ,sizeof(double), compareDoubles);  
+   // double medianThroughput = throughputMeasurements[times/2];
 
-    printf("Median Throughput: %.6f operations per second\n", medianThroughput); 
+    // printf("Median Throughput: %.6f operations per second\n", medianThroughput); 
 
-    return medianThroughput;
+    // Calc average value
+    data.average = sum / times;
+
+    // Calc standard deviation
+    data.stdDeviation = standardDeviation(throughputMeasurements,data.average,times);
+
+    return data; 
 }
 
 // High Contention Benchmark 
@@ -204,22 +232,30 @@ double benchmarkLockHighContention(int sampleSize) {
     return throughput;
 }
 
-double medianBenchHighContention(int sampleSize,int times){
-
-   // Init measurement array 
+Stats dataBenchHighContention(int sampleSize,int times){
+    // Init data struct
+    Stats data;
     double throughputMeasurements[times];
-
+    double sum; 
     for (int i=0; i<times; i++){
-        throughputMeasurements[i] = benchmarkLockHighContention(sampleSize);
-       // printf("Throughput: %.6f operations per second\n", throughputMeasurements[i]); 
+        double value = benchmarkLockHighContention(sampleSize);
+        throughputMeasurements[i] = value;
+        sum += value;
+        //printf("Throughput: %.6f operations per second\n", throughputMeasurements[i]); 
     }
 
-    qsort(throughputMeasurements,times ,sizeof(double), compareDoubles);  
-    double medianThroughput = throughputMeasurements[times/2];
+    //qsort(throughputMeasurements,times ,sizeof(double), compareDoubles);  
+   // double medianThroughput = throughputMeasurements[times/2];
 
-    printf("Median Throughput: %.6f operations per second\n", medianThroughput); 
-    
-    return medianThroughput;
+    // printf("Median Throughput: %.6f operations per second\n", medianThroughput); 
+
+    // Calc average value
+    data.average = sum / times;
+
+    // Calc standard deviation
+    data.stdDeviation = standardDeviation(throughputMeasurements,data.average,times);
+
+    return data; 
 }
 
 // Latency Benchmark
@@ -228,7 +264,7 @@ double benchmarkLockLatency(int sampleSize) {
     #pragma omp barrier
 
     double elapsedSeconds = 0; // Total elapsed Seconds for lock aquisition 
-    double longestWait = 0; 
+    //double longestWait = 0; 
 
     //
     // Declare Mutex and Init mutex
@@ -255,7 +291,7 @@ double benchmarkLockLatency(int sampleSize) {
 
             elapsedSeconds += waitTime; // Add to the the elapsed time
 
-            if (waitTime > longestWait){ longestWait = waitTime;}; // Update longest Wait if necessary 
+            //if (waitTime > longestWait){ longestWait = waitTime;}; // Update longest Wait if necessary 
 
             // Critical section is empty since we just measure lock aquisition latency
 
@@ -278,31 +314,42 @@ double benchmarkLockLatency(int sampleSize) {
 
     // Print the results
     //printf("Total Lock Aquisitions: %d \n", totalLockAcquisitions);
-    printf("Longest Wait : %.10f ns\n", longestWait*1e9);
 
     return latency;
 }
 
 // Latency Benchmark
-double medianBenchLatency(int sampleSize, int times){
-    // Init measurement array
+Stats dataBenchLatency(int sampleSize, int times){
+    // Init data struct
+    Stats data;
     double LatencyMeasurements[times];
+    double sum;
 
     for (int i=0; i<times; i++){
-        LatencyMeasurements[i] = benchmarkLockLatency(sampleSize);
+        double value = benchmarkLockLatency(sampleSize);
+        LatencyMeasurements[i] = value;
+        sum += value;
        // printf("Throughput: %.6f operations per second\n", throughputMeasurements[i]); 
     }
 
-    qsort(LatencyMeasurements,times ,sizeof(double), compareDoubles);  
-    double medianLatency = LatencyMeasurements[times/2];
+    //qsort(LatencyMeasurements,times ,sizeof(double), compareDoubles);  
+    //double medianLatency = LatencyMeasurements[times/2];
 
-    printf("Median Latency: %.6f us \n", medianLatency * 1e6); 
-    
-    return medianLatency; 
+    //printf("Median Latency: %.6f us \n", medianLatency * 1e6); 
+
+    // Calc average value
+    data.average = sum / times;
+
+
+    // Calc standard deviation
+    data.stdDeviation = standardDeviation(LatencyMeasurements,data.average,times);
+
+
+    return data; 
 }
 
 // Helper function for output to text files
-void writeThroughputArrayToFile(int threads[], double tp[], int N, char* filename, int sampleSize, int repetitions)
+void writeThroughputArrayToFile(int threads[], Stats tp[], int N, char* filename, int sampleSize, int repetitions)
 {
     FILE *fp = fopen(filename, "w");
 
@@ -311,17 +358,18 @@ void writeThroughputArrayToFile(int threads[], double tp[], int N, char* filenam
     fprintf(fp, "# sampleSize, %i \n", sampleSize);
     fprintf(fp, "# repetitions, %i \n", repetitions);
     fprintf(fp, "--------------------- \n");
-    fprintf(fp, "numberOfThreads, # Throughput [ops/s] \n");    
+    fprintf(fp, "numberOfThreads, Throughput [ops/s], standardDeviation [ops/s] \n");    
 
     // store array
     for(int i = 0; i<N; i++){
-        fprintf(fp, "%i, %f \n", threads[i] ,tp[i]);
+        fprintf(fp, "%i, %f, %f \n", threads[i] ,tp[i].average, tp[i].stdDeviation);
     }
-    
+
     fclose(fp);
 }
 
-void writeLatencyToFile(char* filename, int sampleSize, int repetitions, int numberOfThreads, double latency)
+
+void writeLatencyToFile(char* filename, int sampleSize, int repetitions, int numberOfThreads, Stats latency)
 {
     FILE *fp = fopen(filename, "w");
 
@@ -331,10 +379,10 @@ void writeLatencyToFile(char* filename, int sampleSize, int repetitions, int num
     fprintf(fp, "# repetitions, %i \n", repetitions);
     fprintf(fp, "# numberOfThreads, %i \n",numberOfThreads );
     fprintf(fp, "--------------------- \n");
-    fprintf(fp, "Latency [ns] \n");    
+    fprintf(fp, "Latency [ns], standardDeviation [ns] \n");    
 
     // store value
-    fprintf(fp, "%f \n", latency*1e9);
+    fprintf(fp, "%f,  %f\n", latency.average*1e9, latency.stdDeviation*1e9);
     
     
     fclose(fp);
