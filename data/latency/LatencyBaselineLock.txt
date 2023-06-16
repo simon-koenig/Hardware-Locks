@@ -4,4 +4,4 @@
 # numberOfThreads, 16 
 --------------------- 
 Latency [ns], standardDeviation [ns] 
-9795.346707,  1463.436118
+9316.707775,  1460.544975
