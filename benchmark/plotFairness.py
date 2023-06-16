@@ -31,8 +31,9 @@ for file_name in text_files:
         for i in range(0, threads):
             _, data_ = f.readline().split(",")
             data.append(float(data_))
-        
-
+    
+    
+    plt.figure()
     _ = plt.bar(x=range(1, threads+1), height=data, bottom=0)
     plt.xlabel("Thread ID")
     plt.ylabel("Number of lock acquisations")
