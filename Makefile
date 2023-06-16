@@ -21,11 +21,9 @@ $(DATA_DIR):
 	$(MKDIR) $(DATA_DIR)/correctness
 	$(MKDIR) $(DATA_DIR)/fairness
 
-
 $(BUILD_DIR):
 	@echo "Creating build directory: $(BUILD_DIR)"
 	$(MKDIR) $(BUILD_DIR)
-
 
 default_target:
 	mkdir build
@@ -40,8 +38,11 @@ correctnessTest: ./correctness/CorrectnessTest.c  $(BUILD_DIR) $(DATA_DIR)
 
 
 fairnessBench: benchmark/fairness.c  $(BUILD_DIR) $(DATA_DIR)
-	${CC} benchmark/fairness.c -o build/x -fopenmp -include locks/$(lock).c
-	$(server) ./build/x $(thread_number) $(reps) $(acquisitions)
+	@for lock in $(LOCKS) ; do \
+		${CC} benchmark/fairness.c -o build/x -fopenmp -include locks/$$lock.c ; \
+		$(server) ./build/x $(threads) $(repetitions) $(sampleSize) $$lock; \
+	done
+
 
 
 latency: ./benchmark/latency.c  $(BUILD_DIR) $(DATA_DIR)

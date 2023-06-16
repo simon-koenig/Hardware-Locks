@@ -362,7 +362,6 @@ void writeThroughputArrayToFile(int threads[], Stats tp[], int N, char* filename
     fclose(fp);
 }
 
-
 void writeLatencyToFile(char* filename, int sampleSize, int repetitions, int numberOfThreads, Stats latency)
 {   
     char datafile[120] = "./data/latency/";

@@ -5,7 +5,9 @@
 
 void writeArrayToFile(double* p, int N, char* filename, int threads, int max_iter, int repetitions)
 {
-    FILE *fp = fopen(filename, "w");
+    char datafile[120] = "./data/fairness/";
+    strcat(datafile,filename);
+    FILE *fp = fopen(datafile, "w");
 
     // store basic information about run
     fprintf(fp, "--------------------- \n");
@@ -23,7 +25,6 @@ void writeArrayToFile(double* p, int N, char* filename, int threads, int max_ite
     fclose(fp);
 }
 
-
 int main (int argc, char *argv[]){
 
     /*
@@ -37,8 +38,14 @@ int main (int argc, char *argv[]){
     omp_set_num_threads(thread_number);
     int reps = atoi(argv[2]);
     int max_lock_calls = atoi(argv[3]);
-    //char* filename = argv[4];
-    char* filename = "build/fairness_data.txt";
+    char* lockname = argv[4];
+
+    // Write to outfile
+    char *lockName = argv[4];
+    char filename[100] = "Fairness";
+    strcat(filename,lockName);
+    strcat(filename,".txt");
+    //char* filename = "build/fairness_data.txt";
 
     // Declare Mutex
     Lock LOCK;

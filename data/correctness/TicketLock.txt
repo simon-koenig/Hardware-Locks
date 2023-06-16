@@ -1,4 +1,4 @@
-Lock name: CLHLock
+Lock name: TicketLock
 Thread number: 16
 Array size: 1000
 --------------------------------------------
