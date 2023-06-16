@@ -14,7 +14,7 @@ typedef struct Node
     char padding[64];
 } Node;
 
-static __thread struct Node MyNode = {1, (Node*) NULL, ""};
+static __thread struct Node* MyNode;
 
 typedef struct
 {
@@ -26,7 +26,7 @@ typedef struct
 void init(Lock * self)
 {
     // We create the first sentinel node unlocked, with islocked=0
-    Node node = {0, (Node*) NULL, " "};
+    Node node = {0, (Node*) NULL, ""};
     self->dummy = node;
     atomic_store(&self->tail, &self->dummy);
 }
@@ -38,15 +38,15 @@ void destroy(Lock * self)
 }
 
 void lock(Lock * self)
-{
-    Node *mynode = &MyNode; // My own node
-    mynode->next = (Node*) atomic_exchange(&self->tail, mynode);
-    while (atomic_load(&mynode->next->succ_must_wait)) {}
+{  
+    MyNode = (Node*)malloc(sizeof(struct Node)); // My own node
+    atomic_store(&MyNode->succ_must_wait, 1);    
+    MyNode->next = (Node*) atomic_exchange_explicit(&self->tail, MyNode, memory_order_seq_cst);
+    while (atomic_load(&MyNode->next->succ_must_wait)) {}
 }
 
 
 void unlock(Lock * self)
 {
-    Node *mynode = &MyNode; // My own node 
-    atomic_store(&mynode->succ_must_wait, 0);
+    atomic_store(&MyNode->succ_must_wait, 0);
 }
