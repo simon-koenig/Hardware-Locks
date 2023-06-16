@@ -35,8 +35,6 @@ int main(int argc, char *argv[]) {
     strcat(filename,lockName);
     strcat(filename,".txt");
 
-
-
     writeLatencyToFile(filename, sampleSize, reps, numThreads, latencyData);
 
     return 0;

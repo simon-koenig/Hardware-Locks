@@ -37,4 +37,5 @@ for file_name in text_files:
     plt.xlabel("Thread ID")
     plt.ylabel("Number of lock acquisations")
     lock = file_name.split('Fairness')[1].split('.txt')[0]
+    plt.savefig("plots/Fairness"+lock+".svg")
 

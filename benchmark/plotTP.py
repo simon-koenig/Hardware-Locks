@@ -52,7 +52,6 @@ def plotLockTPHigh():
     plt.yscale("log")
     plt.legend()
     plt.grid()
-    plt.show()
     plt.savefig("plots/TPHighContention.svg")
 
 def plotLockTPLow():
@@ -75,7 +74,7 @@ def plotLockTPLow():
     plt.yscale("log")
     plt.legend()
     plt.grid()
-    plt.show()
+    plt.savefig("plots/TPLowContention.svg")
     
 
 

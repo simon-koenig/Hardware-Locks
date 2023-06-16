@@ -85,7 +85,6 @@ plotFairness: $(PLOTS_DIR)
 	python3 ./benchmark/plotFairness.py
 
 
-all-plots: plotTPHigh plotTPLow plotLatency plotFairness
 
 small-plot: plotTPHigh plotTPLow plotLatency plotFairness
 

@@ -4,7 +4,6 @@
 #include <string.h>
 
 
-
 // 
 // Source code
 // 
@@ -26,7 +25,6 @@ double standardDeviation(double array[],double mean, int times){
     return stdDev;
 
 }
-
 
 
 // Low Contention Benchmark
