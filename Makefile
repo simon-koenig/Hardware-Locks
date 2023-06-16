@@ -95,7 +95,7 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 clean-plots:
-	rm -rf $(DATA_DIR)
+	rm -rf $(PLOTS_DIR)
 
 clean-data: 
 	rm -rf $(DATA_DIR)
