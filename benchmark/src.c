@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <string.h>
+
 
 
 // 
@@ -25,15 +27,6 @@ double standardDeviation(double array[],double mean, int times){
 
 }
 
-// Helper Function for median calculation
-/* int compareDoubles(const void *a,const void *b) {
-    double *x = (double *) a;
-    double *y = (double *) b;
-    if (*x < *y) return -1;
-    else if (*x > *y) return 1; 
-    else return 0;
-}
-*/
 
 
 // Low Contention Benchmark
@@ -349,8 +342,10 @@ Stats dataBenchLatency(int sampleSize, int times){
 
 // Helper function for output to text files
 void writeThroughputArrayToFile(int threads[], Stats tp[], int N, char* filename, int sampleSize, int repetitions)
-{
-    FILE *fp = fopen(filename, "w");
+{   
+    char datafile[100] = "./data/throughput/";
+    strcat(datafile,filename);
+    FILE *fp = fopen(datafile, "w");
 
     // store basic information about run
     fprintf(fp, "--------------------- \n");
@@ -369,8 +364,10 @@ void writeThroughputArrayToFile(int threads[], Stats tp[], int N, char* filename
 
 
 void writeLatencyToFile(char* filename, int sampleSize, int repetitions, int numberOfThreads, Stats latency)
-{
-    FILE *fp = fopen(filename, "w");
+{   
+    char datafile[120] = "./data/latency/";
+    strcat(datafile,filename);
+    FILE *fp = fopen(datafile, "w");
 
     // store basic information about run
     fprintf(fp, "--------------------- \n");

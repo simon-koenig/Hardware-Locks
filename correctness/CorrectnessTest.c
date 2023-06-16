@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
     strcpy(lockname, lockp);
 
     // define filename
-    char filename[60] ="correctness/results/";
+    char filename[60] ="data/correctness/";
     strcat(filename, lockname);
     strcat(filename, ".txt");
 

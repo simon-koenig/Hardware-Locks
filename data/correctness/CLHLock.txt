@@ -1,0 +1,8 @@
+Lock name: CLHLock
+Thread number: 16
+Array size: 1000
+--------------------------------------------
+Sequential sum:	508.1255
+Parallel sum:	490.7363
+--------------------------------------------
+Sums of arrays not equal - correctness violated!!!
