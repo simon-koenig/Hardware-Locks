@@ -1,8 +1,8 @@
 Lock name: TicketLock
 Thread number: 16
-Array size: 10000
+Array size: 100000
 --------------------------------------------
-Sequential sum:	4971.3193
-Parallel sum:	4971.3193
+Sequential sum:	49986.6719
+Parallel sum:	49986.6719
 --------------------------------------------
 No violations in correctness found.
