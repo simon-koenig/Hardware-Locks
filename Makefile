@@ -71,12 +71,11 @@ tp-low-contention: ./benchmark/tp-low-contention.c $(BUILD_DIR) $(DATA_DIR)
 
 bench: correctnessTest fairness latency tp-high-contention tp-low-contention
 
-plotTPHigh:  
+plotTPHigh:  $(PLOTS_DIR)
 	python3 ./benchmark/plotTP.py high
 
 plotTPLow: $(PLOTS_DIR)
 	python3 ./benchmark/plotTP.py low
-
 
 plotLatency: $(PLOTS_DIR)
 	python3 ./benchmark/plotLatency.py
@@ -84,9 +83,8 @@ plotLatency: $(PLOTS_DIR)
 plotFairness: $(PLOTS_DIR)
 	python3 ./benchmark/plotFairness.py
 
-
-
 small-plot: plotTPHigh plotTPLow plotLatency plotFairness
+
 
 # Cleaning
 .PHONY: clean
