@@ -11,7 +11,7 @@
 
 int main(int argc, char *argv[]) {
     // Set the number of threads
-    int numThreads[10] = {1,2,3,4,5,8,10,16,32,50,64};
+    int numThreads[11] = {1,2,3,4,5,8,10,16,32,50,64};
 
     if (argc != 5) {
         printf("ERROR: Programm needs four input parameter: \n");
