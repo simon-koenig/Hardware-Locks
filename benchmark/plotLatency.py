@@ -4,15 +4,20 @@ import matplotlib.pyplot as plt
 # import sys
 import os
 
-# Read in Latency Text files from various Locks and store in array. V
-directory = os.path.dirname(os.path.abspath(__file__))
-text_files = [file_name for file_name in os.listdir(directory) if file_name.startswith("Latency")]
+# Read in Latency Text files from various Locks and store in array. 
+# Get the current directory
+current_directory = os.path.dirname(os.path.abspath(__file__))
+# Get the parent directory
+parent_directory = os.path.dirname(current_directory)
+data_directory = os.path.join(parent_directory,"data","latency")
+text_files = [file_name for file_name in os.listdir(data_directory) if file_name.startswith("Latency")]
 latency_array = []
 lock_array = []
 stdDev_array = []
 
+
 for file_name in text_files:
-    file_path = os.path.join(directory, file_name)
+    file_path = os.path.join(data_directory, file_name)
     with open(file_path, 'r') as file:
         lines = file.readlines()
         if len(lines) >= 7:
@@ -41,6 +46,6 @@ ax.yaxis.grid(True)
 
 # Save the figure and show
 plt.tight_layout()
-#plt.savefig('bar_plot_with_error_bars.png')
+plt.savefig('./plots/latency.svg')
 plt.show()
 

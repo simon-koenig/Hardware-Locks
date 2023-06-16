@@ -7,7 +7,7 @@
 
 int main(int argc, char *argv[]) {
     // Set the number of threads
-    int numThreads[10] = {1,2,3,4,5,8,10,16,32,50};
+    int numThreads[10] = {1,2,3,4,5,8,10,16,32,50,64};
 
     if (argc != 5) {
         printf("ERROR: Programm needs four input parameter: \n");
@@ -26,8 +26,8 @@ int main(int argc, char *argv[]) {
     // Run the benchmark
     // 
 
-    Stats resultArray[10]; 
-    for(size_t i=0;i<10;i++){
+    Stats resultArray[11]; 
+    for(size_t i=0;i<11;i++){
         omp_set_num_threads(numThreads[i]);
         // printf("Number of threads %i \n", numThreads[i]);
         resultArray[i] = dataBenchHighContention(sampleSize, reps);
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     strcat(filename,".txt");
  
 
-    writeThroughputArrayToFile(numThreads,resultArray, 10, filename, sampleSize, reps);
+    writeThroughputArrayToFile(numThreads,resultArray, 11, filename, sampleSize, reps);
 
     return 0;
 }

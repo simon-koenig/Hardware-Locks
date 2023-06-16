@@ -5,7 +5,7 @@ import pandas as pd
 import sys
 import os
 
-def plotSingleTP(data,color,label,marker):
+def plotSingleTP(data,label,marker):
     # Read in Latency Text files from various Locks and store in array. V
     directory = os.path.dirname(os.path.abspath(__file__))
     #text_files = [file_name for file_name in os.listdir(directory) if file_name.startswith("TPHighContention")]
@@ -33,29 +33,42 @@ def plotSingleTP(data,color,label,marker):
     plt.errorbar(df["Threads"], df["Means"], df["stdDevs"], linestyle='None', fmt='o', capsize=3)
 
 def plotLockTPHigh():
-    directory = os.path.dirname(os.path.abspath(__file__))
-    data_files = [file_name for file_name in os.listdir(directory) if file_name.startswith("TPHighContention")]
+    # Get the current directory
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    # Get the parent directory
+    parent_directory = os.path.dirname(current_directory)
+    data_directory = os.path.join(parent_directory,"data","throughput")
+    data_files = [file_name for file_name in os.listdir(data_directory) if file_name.startswith("TPHighContention")]
     markers = ['+', '.', '*', 'o', 'v', 'x','^']
 
     for data_file, marker in zip(data_files ,markers):
+        file_path = os.path.join(data_directory, data_file)
         lock_name = data_file.split('TPHighContention')[1].split('.txt')[0]
-        plotSingleTP(data=data_file, color="black",label=lock_name, marker=marker)
+        plotSingleTP(data=file_path,label=lock_name, marker=marker)
     #plt.title("Tp High Contention")
     plt.xlabel("Threads")
+
     plt.ylabel("Aggregate throughput rate: ops/sec")
     plt.yscale("log")
     plt.legend()
     plt.grid()
     plt.show()
+    plt.savefig("plots/TPHighContention.svg")
 
 def plotLockTPLow():
-    directory = os.path.dirname(os.path.abspath(__file__))
-    data_files = [file_name for file_name in os.listdir(directory) if file_name.startswith("TPLowContention")]
+     # Get the current directory
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    # Get the parent directory
+    parent_directory = os.path.dirname(current_directory)
+    data_directory = os.path.join(parent_directory,"data","throughput")
+    data_files = [file_name for file_name in os.listdir(data_directory) if file_name.startswith("TPLowContention")]
     markers = ['+', '.', '*', 'o', 'v', 'x','^']
 
+
     for data_file, marker in zip(data_files ,markers):
+        file_path = os.path.join(data_directory, data_file)
         lock_name = data_file.split('TPLowContention')[1].split('.txt')[0]
-        plotSingleTP(data=data_file, color="black",label=lock_name, marker=marker)
+        plotSingleTP(data=file_path,label=lock_name, marker=marker)
     #plt.title("Tp High Contention")
     plt.xlabel("Threads")
     plt.ylabel("Aggregate throughput rate: ops/sec")
@@ -66,11 +79,12 @@ def plotLockTPLow():
     
 
 
-if sys.argv[1] == "high":
-    plotLockTPHigh()
+if __name__ == "__main__": 
+    if sys.argv[1] == "high":
+        plotLockTPHigh()
 
-if sys.argv[1] == "low":
-    plotLockTPLow()
+    if sys.argv[1] == "low":
+        plotLockTPLow()
 
 
 
