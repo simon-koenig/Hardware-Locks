@@ -54,6 +54,11 @@ int main(int argc, char *argv[]) {
             // Thread is in critical section - write to counter 
             counter += 1; 
 
+            
+            if (counter==array_size){
+                printf("array_sum is: %f\n", array_sum_parallel);
+            }
+
             // Release the lock 
             unlock(&LOCK);
            }
@@ -62,7 +67,6 @@ int main(int argc, char *argv[]) {
 
     if (counter == array_size+1){
         printf("ERROR: counter != array_size. Try again!\n");
-        return 0;
     }
 
     destroy(&LOCK);
