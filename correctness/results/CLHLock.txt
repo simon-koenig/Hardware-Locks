@@ -1,8 +1,8 @@
 Lock name: CLHLock
 Thread number: 8
-Array size: 100000
+Array size: 1000
 --------------------------------------------
-Sequential sum:	49986.6719
-Parallel sum:	32694.1328
+Sequential sum:	508.1255
+Parallel sum:	217.4553
 --------------------------------------------
 Sums of arrays not equal - correctness violated!!!

@@ -1,8 +1,8 @@
 Lock name: TestAndSetLock
 Thread number: 8
-Array size: 100000
+Array size: 1000000
 --------------------------------------------
-Sequential sum:	49986.6719
-Parallel sum:	49986.6719
+Sequential sum:	500003.7500
+Parallel sum:	500003.7500
 --------------------------------------------
 No violations in correctness found.
