@@ -1,8 +1,8 @@
-Lock name: IncorrectLock
+Lock name: MCSLock
 Thread number: 8
 Array size: 1000000
 --------------------------------------------
 Sequential sum:	500003.7500
-Parallel sum:	154788.9688
+Parallel sum:	500003.7500
 --------------------------------------------
-Sums of arrays not equal - correctness violated!!!
+No violations in correctness found.

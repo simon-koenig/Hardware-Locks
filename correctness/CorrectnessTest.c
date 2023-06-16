@@ -16,8 +16,6 @@ int main(int argc, char *argv[]) {
     strcat(filename, lockname);
     strcat(filename, ".txt");
 
-
-    _Atomic int lock_calls = 0;
     int counter = 0;
 
     float array_sum_seqential = 0, array_sum_parallel = 0;
@@ -29,45 +27,30 @@ int main(int argc, char *argv[]) {
         array_sum_seqential = array_sum_seqential + array[i];
     }
 
+    printf("\n%s:\n", lockname);
+    printf("thread number: %d, array size: %d\n", thread_number, array_size);
+    printf("-----------------------------------\n");
+
     Lock LOCK;
     init(&LOCK);
-
-    printf("Hello from threads ...\n");
     
-    #pragma omp parallel shared(LOCK, counter, lock_calls)
-    {
+    #pragma omp parallel for shared(LOCK, counter)
 
-        printf("%d \n", omp_get_thread_num());
-        
-        // sum parallel
-        while(atomic_load(&lock_calls) < array_size){
+    // sum parallel
+    for(int i=0; i < array_size; i++){
 
-             // add 1 to lock_calls
-            atomic_fetch_add(&lock_calls, 1);
+        // Acquire the lock
+        lock(&LOCK);
 
-            // Acquire the lock
-            lock(&LOCK);
+        // Add elementwise
+        array_sum_parallel += array[counter];
 
-            // Add elementwise
-            array_sum_parallel += array[counter];
+        // Thread is in critical section - write to counter 
+        counter += 1; 
 
-            // Thread is in critical section - write to counter 
-            counter += 1; 
-
-            
-            if (counter==array_size){
-                printf("array_sum is: %f\n", array_sum_parallel);
-            }
-
-            // Release the lock 
-            unlock(&LOCK);
-           }
-    }
-    printf("Last counter: %d\n", counter);
-
-    if (counter == array_size+1){
-        printf("ERROR: counter != array_size. Try again!\n");
-    }
+        // Release the lock 
+        unlock(&LOCK);
+        }
 
     destroy(&LOCK);
 

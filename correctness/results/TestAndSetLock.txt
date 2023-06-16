@@ -3,6 +3,6 @@ Thread number: 8
 Array size: 1000000
 --------------------------------------------
 Sequential sum:	500003.7500
-Parallel sum:	77135212106908150064092232548352.0000
+Parallel sum:	500003.7500
 --------------------------------------------
-Sums of arrays not equal - correctness violated!!!
+No violations in correctness found.
