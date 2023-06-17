@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     int reps = atoi(argv[3]);
 
     // Print sampleSize
-    // printf("Lock Acquisitions:  %i \n", sampleSize);
+    printf("Lock Acquisitions:  %i \n", sampleSize);
 
     //
     // Run the benchmark
@@ -29,18 +29,20 @@ int main(int argc, char *argv[]) {
     Stats resultArray[11]; 
     for(size_t i=0;i<11;i++){
         omp_set_num_threads(numThreads[i]);
-        // printf("Number of threads %i \n", numThreads[i]);
         resultArray[i] = dataBenchHighContention(sampleSize, reps);
+    }  
+    /*
+    for(size_t i=0;i<11;i++){
+        printf("Threads %i, values %f \n", numThreads[i],resultArray[i].average);  
     }   
-
-
+    */
     // Write to outfile
     char *lockName = argv[4];
     char filename[100] = "TPHighContention";
     strcat(filename,lockName);
     strcat(filename,".txt");
  
-
+    printf("Writing TP array to file ");
     writeThroughputArrayToFile(numThreads,resultArray, 11, filename, sampleSize, reps);
 
     return 0;
