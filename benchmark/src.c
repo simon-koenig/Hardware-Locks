@@ -4,7 +4,6 @@
 #include <string.h>
 
 
-
 // 
 // Source code
 // 
@@ -26,7 +25,6 @@ double standardDeviation(double array[],double mean, int times){
     return stdDev;
 
 }
-
 
 
 // Low Contention Benchmark
@@ -129,7 +127,7 @@ Stats dataBenchLowContention(int sampleSize, int times){
     // Init data struct
     Stats data;
     double throughputMeasurements[times];
-    double sum; 
+    double sum=0; 
     for (int i=0; i<times; i++){
         double value = benchmarkLockLowContention(sampleSize);
         throughputMeasurements[i] = value;
@@ -210,7 +208,7 @@ double benchmarkLockHighContention(int sampleSize) {
     double elapsedSeconds = endTime - startTime;
 
     // Calculate the throughput
-    double throughput = ( totalLockAcquisitions + 5 ) / elapsedSeconds;
+    double throughput = ( totalLockAcquisitions * 5 ) / elapsedSeconds;
 
     // Print the results
     //printf("Total Lock Aquisitions: %d \n", totalLockAcquisitions);
@@ -229,7 +227,8 @@ Stats dataBenchHighContention(int sampleSize,int times){
     // Init data struct
     Stats data;
     double throughputMeasurements[times];
-    double sum; 
+    double sum=0; 
+
     for (int i=0; i<times; i++){
         double value = benchmarkLockHighContention(sampleSize);
         throughputMeasurements[i] = value;
@@ -315,7 +314,7 @@ Stats dataBenchLatency(int sampleSize, int times){
     // Init data struct
     Stats data;
     double LatencyMeasurements[times];
-    double sum;
+    double sum=0;
 
     for (int i=0; i<times; i++){
         double value = benchmarkLockLatency(sampleSize);
@@ -332,10 +331,8 @@ Stats dataBenchLatency(int sampleSize, int times){
     // Calc average value
     data.average = sum / times;
 
-
     // Calc standard deviation
     data.stdDeviation = standardDeviation(LatencyMeasurements,data.average,times);
-
 
     return data; 
 }
@@ -346,6 +343,7 @@ void writeThroughputArrayToFile(int threads[], Stats tp[], int N, char* filename
     char datafile[100] = "./data/throughput/";
     strcat(datafile,filename);
     FILE *fp = fopen(datafile, "w");
+
 
     // store basic information about run
     fprintf(fp, "--------------------- \n");
@@ -358,7 +356,6 @@ void writeThroughputArrayToFile(int threads[], Stats tp[], int N, char* filename
     for(int i = 0; i<N; i++){
         fprintf(fp, "%i, %f, %f \n", threads[i] ,tp[i].average, tp[i].stdDeviation);
     }
-
     fclose(fp);
 }
 
