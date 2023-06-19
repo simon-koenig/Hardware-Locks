@@ -1,8 +1,0 @@
-Lock name: BaselineLock
-Thread number: 8
-Array size: 1000000
---------------------------------------------
-Sequential sum:	500003.7500
-Parallel sum:	500003.7500
---------------------------------------------
-No violations in correctness found.

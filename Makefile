@@ -35,9 +35,9 @@ default_target:
 	mkdir build
 
 # run local by specifying variable 'server' as empty (server="")
-correctnessTest: ./correctness/CorrectnessTest.c  $(BUILD_DIR) $(DATA_DIR)
-	@for lock in $(LOCKS) ; do \
-		${CC} ./correctness/CorrectnessTest.c -o $(BUILD_DIR)/x -fopenmp -include ./locks/$$lock.c ${CFLAGS} ; \
+correctnessTest: ./src/correctnessTest.c  $(BUILD_DIR) $(DATA_DIR)
+	@for lock in $(LOCKS) IncorrectLock ; do \
+		${CC} ./src/correctnessTest.c -o $(BUILD_DIR)/x -fopenmp -include ./locks/$$lock.c ${CFLAGS} ; \
 		$(server) ./$(BUILD_DIR)/x $(threads) $(sampleSize) $$lock ; \
 	done
 

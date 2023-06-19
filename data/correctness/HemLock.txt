@@ -1,8 +1,8 @@
 Lock name: HemLock
 Thread number: 4
-Array size: 1000
+Array size: 10000
 --------------------------------------------
-Sequential sum:	508.1255
-Parallel sum:	508.1255
+Sequential sum:	4971.3193
+Parallel sum:	4971.3193
 --------------------------------------------
 No violations in correctness found.
