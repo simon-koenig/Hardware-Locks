@@ -27,7 +27,7 @@ def plotSingleTP(data,label,marker,color):
 
 
     df = {"Threads": threads, "Means": means, "stdDevs": stdDevs}
-    # plt.plot(df["Threads"], df["Means"], label = label, marker = marker, color = color)
+    plt.plot(df["Threads"], df["Means"], label = label, marker = marker, color = color)
     plt.errorbar(df["Threads"], df["Means"], df["stdDevs"], linestyle='None', marker=marker, capsize=2, color = color)
 
 def plotLockTPHigh():
@@ -37,8 +37,8 @@ def plotLockTPHigh():
     parent_directory = os.path.dirname(current_directory)
     data_directory = os.path.join(parent_directory,"data","throughput")
     data_files = [file_name for file_name in os.listdir(data_directory) if file_name.startswith("TPHighContention")]
-    markers = ['+', '.', '*', 'o', 'v', 'x','^']
-    colors = ['red', "pink",'green', 'blue', 'yellow', "black", "purple"]
+    markers = ['+', '.', '*', 'o', 'v', 'x','^','+']
+    colors = ['red', "pink",'green', 'blue', 'yellow', "black", "purple",'grey']
 
     for data_file, marker, color in zip(data_files ,markers,colors):
         file_path = os.path.join(data_directory, data_file)
@@ -63,8 +63,8 @@ def plotLockTPLow():
     parent_directory = os.path.dirname(current_directory)
     data_directory = os.path.join(parent_directory,"data","throughput")
     data_files = [file_name for file_name in os.listdir(data_directory) if file_name.startswith("TPLowContention")]
-    markers = ['+', '.', '*', 'o', 'v', 'x','^']
-    colors = ['red', "pink",'green', 'blue', 'yellow', "black", "purple"]
+    markers = ['+', '.', '*', 'o', 'v', 'x','^','+']
+    colors = ['red', "pink",'green', 'blue', 'yellow', "black", "purple","grey"]
 
 
     for data_file, marker, color  in zip(data_files ,markers ,colors):
@@ -75,7 +75,7 @@ def plotLockTPLow():
     plt.xlabel("Threads")
     plt.ylabel("Aggregate throughput rate: ops/sec")
     plt.xscale("log")
-    plt.yscale("log")
+    #plt.yscale("log")
     plt.xticks([1,2,5,10,20,50,64],[1,2,5,10,20,50,64])
     plt.legend()
     plt.grid()
