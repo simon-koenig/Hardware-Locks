@@ -1,32 +1,107 @@
 Project about Hardware Locks for "Advanced Multiprocessor Programming", summer term 2023 at TU WIEN. 
 
+# Project descripton
+
+One of the main challenges in multiprocessor programming is to make sure that shared datastructures are read from and written to in a sequential-like manner. A universal way how this can be achieved for arbitrary datastructures is to generate a lock which makes sure that only one thread can access at a time. Since reading and writing to a shared datastructure in a given algorithm is done quite frequently, it is important that the actual implementation of the used lock is as efficient and fast as possible. Therefore, implementations of such locks often utilize hardware supported operations to optimize the efficiency even further. 
+
+In this project, several implementations of locks using hardware supported operations should be implemented correctly. Furthermore, the performance and fairness parameter of the locks with varying thread number should be compared.
+
+# Dependencies
+
+To run all the scripts one needs to install the following packages (also GCC and Python3):
+* Numpy
+* Matplotlib
+* Pandas
+
+Installation can be done with 
+```sh
+$ make install
+```
 # Usage
 
-Compilation and execution is done with the following commands:
-
-### Correctness:
-
+Compile and run a throughput benchmark for low contention for all the locks implemented (except incorrect lock):
 ```sh
-$ make correctnessTest lock=... thread_number=... array_size=...
+$ make small-bench
 ```
-e.g.:
+To plot the data generated run:
 ```sh
-$ make correctnessTest lock=TicketLock thread_number=30 array_size=10000
+$ make small-plot
 ```
 
-### Benchmarks:
+One can also specify the input parameters: threads, repetitions, sampleSize
+
+e.g. 
+```sh
+$ make small-bench sampleSize=10000 threads=8
+```
+
+### **Correctness:**
+Check locks for correctness:
+```sh
+$ make correctnessTest
+```
+
+### **Benchmarks:**
+Benchmarking:
+```sh
+$ make fairness
+```
+```sh
+$ make tp-high-contention
+```
+```sh
+$ make tp-low-contention
+```
+```sh
+$ make latency
+```
+### **All:**
+For the correctness test and all the benchmarks run: 
 
 ```sh
-$ make fairness lock=... thread_number=... reps=... acquisitions=...
+$ make bench
 ```
+### **Cleaning:**
+
+
 ```sh
-$ make throughput lock=...
+$ make clean
 ```
+
+
+# Folder structure
 ```sh
-$ make latency lock=...
-```
-e.g.:
-```sh
-$ make fairness lock=TestAndSet thread_number=20 reps=10 acquisitions=10000
+├── build
+├── data
+│   ├── correctness
+│   ├── fairness
+│   ├── latency
+│   └── throughput
+├── locks
+│   ├── ArrayLock.c
+│   ├── BaselineLock.c
+│   ├── CLHLock.c
+│   ├── HemLock.c
+│   ├── IncorrectLock.c
+│   ├── MCSLock.c
+│   ├── TestAndSetLock.c
+│   ├── TestAndTestAndSetLock.c
+│   └── TicketLock.c
+└── src
+    ├── correctnessTest.c
+    ├── fairness.c
+    ├── latency.c
+    ├── plotFairness.py
+    ├── plotLatency.py
+    ├── plotTP.py
+    ├── tp-high-contention.c
+    ├── tp-low-contention.c
+    └── utils.c
+├── AMP_Programming_Assignment.pdf
+├── LICENSE
+├── Makefile
+├── Projects.pdf
+├── README
+
 ```
 
