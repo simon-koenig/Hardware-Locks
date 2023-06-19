@@ -9,9 +9,9 @@ PLOTS_DIR = plots
 
 # Default values for variables
 LOCKS ?= BaselineLock TestAndSetLock TestAndTestAndSetLock TicketLock ArrayLock CLHLock MCSLock HemLock
-sampleSize ?= 10000
+sampleSize ?= 1000
 repetitions ?= 50
-threads ?= 16
+threads ?= 8
 server?=srun -p q_student --time=1:00 -N 1 -c 64
 
 $(DATA_DIR):
