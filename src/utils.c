@@ -257,6 +257,8 @@ double benchmarkLockLatency(int sampleSize) {
 
     double elapsedSeconds = 0; // Total elapsed Seconds for lock aquisition 
     //double longestWait = 0; 
+    // Init shared number storage
+    unsigned int sharedGenerator;
 
     //
     // Declare Mutex and Init mutex
@@ -271,6 +273,18 @@ double benchmarkLockLatency(int sampleSize) {
     // Each thread performs the lock acquisition operation
         // A sampleSize number of times  
         for (int j=0; j<sampleSize; j++){
+
+            // 
+            // Delay each thread randomly 
+            //
+
+            unsigned int localSeed = time(NULL) + omp_get_thread_num();
+            srand(localSeed);
+            unsigned int localSteps = rand_r(&localSeed) % 800;
+            for (unsigned int j = 0; j < localSteps; ++j) {
+                rand_r(&localSeed);
+            }
+
             //
             // Aquire lock and time 
             // 
