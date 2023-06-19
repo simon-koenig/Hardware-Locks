@@ -1,5 +1,10 @@
 Project about Hardware Locks for "Advanced Multiprocessor Programming", summer term 2023 at TU WIEN. 
 
+Contributors:
+* Simon König, 11702826
+* Viktor Beck, 11713110
+* Michael Ketter, 11701297
+
 # Project descripton
 
 One of the main challenges in multiprocessor programming is to make sure that shared datastructures are read from and written to in a sequential-like manner. A universal way how this can be achieved for arbitrary datastructures is to generate a lock which makes sure that only one thread can access at a time. Since reading and writing to a shared datastructure in a given algorithm is done quite frequently, it is important that the actual implementation of the used lock is as efficient and fast as possible. Therefore, implementations of such locks often utilize hardware supported operations to optimize the efficiency even further. 
@@ -33,7 +38,7 @@ In low contention cases we gain an advantage in using multiple threads over a si
 
 
 
-One can also specify the input parameters: 'threads', 'repetitions', 'sampleSize' and 'server'. The parameter 'server' is only used for local testing (just add 'server=' to make command and it will work locally). E.g.: 
+One can also specify the input parameters: 'threads', 'repetitions', 'sampleSize' and 'server' (parameter 'server' is only used for local testing - just add 'server=' to make command and it will work locally). E.g.: 
 ```sh
 $ make small-bench sampleSize=10000 threads=8
 ```
@@ -67,6 +72,13 @@ For the correctness test and all the benchmarks run:
 ```sh
 $ make bench
 ```
+
+### **Plotting:**
+Plot all the data in data folder:
+```sh
+$ make plot
+```
+
 ### **Cleaning:**
 
 
