@@ -28,7 +28,8 @@ int main(int argc, char *argv[]) {
     omp_set_num_threads(numThreads);
     // printf("Number of threads %i \n", numThreads);
     Stats latencyData = dataBenchLatency(sampleSize,reps);
-
+    printf("Latency average: %.6f ns\n",latencyData.average*1e9); 
+    printf("Latency stDeviation: %.6f ns\n",latencyData.stdDeviation*1e9); 
     // Write to outfile
     char *lockName = argv[4];
     char filename[100] = "Latency";

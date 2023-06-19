@@ -320,7 +320,7 @@ Stats dataBenchLatency(int sampleSize, int times){
         double value = benchmarkLockLatency(sampleSize);
         LatencyMeasurements[i] = value;
         sum += value;
-       // printf("Throughput: %.6f operations per second\n", throughputMeasurements[i]); 
+        printf("Latency: %.6f ns\n", LatencyMeasurements[i]*1e9); 
     }
 
     //qsort(LatencyMeasurements,times ,sizeof(double), compareDoubles);  
@@ -330,10 +330,11 @@ Stats dataBenchLatency(int sampleSize, int times){
 
     // Calc average value
     data.average = sum / times;
+    printf("Latency average: %.6f ns\n",data.average*1e9); 
 
     // Calc standard deviation
     data.stdDeviation = standardDeviation(LatencyMeasurements,data.average,times);
-
+    printf("Latency stDeviation: %.6f ns\n",data.stdDeviation*1e9); 
     return data; 
 }
 
@@ -374,7 +375,7 @@ void writeLatencyToFile(char* filename, int sampleSize, int repetitions, int num
     fprintf(fp, "Latency [ns], standardDeviation [ns] \n");    
 
     // store value
-    fprintf(fp, "%f,  %f\n", latency.average*1e9, latency.stdDeviation*1e9);
+    fprintf(fp, "%.6f,  %.6f\n", latency.average*1e9, latency.stdDeviation*1e9);
     
     
     fclose(fp);
