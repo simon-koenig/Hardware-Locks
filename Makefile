@@ -10,7 +10,7 @@ PLOTS_DIR = plots
 # Default values for variables
 LOCKS ?= BaselineLock TestAndSetLock TestAndTestAndSetLock TicketLock ArrayLock CLHLock MCSLock HemLock
 sampleSize ?= 10000
-repetitions ?= 10
+repetitions ?= 50
 threads ?= 16
 server?=srun -p q_student --time=1:00 -N 1 -c 64
 
@@ -41,30 +41,30 @@ correctnessTest: ./correctness/CorrectnessTest.c  $(BUILD_DIR) $(DATA_DIR)
 		$(server) ./$(BUILD_DIR)/x $(threads) $(sampleSize) $$lock ; \
 	done
 
-fairness: benchmark/fairness.c  $(BUILD_DIR) $(DATA_DIR)
+fairness: src/fairness.c  $(BUILD_DIR) $(DATA_DIR)
 	@for lock in $(LOCKS) ; do \
-		${CC} benchmark/fairness.c -o build/x -fopenmp -include locks/$$lock.c ; \
+		${CC} src/fairness.c -o build/x -fopenmp -include locks/$$lock.c ; \
 		$(server) ./build/x $(threads) $(repetitions) $(sampleSize) $$lock; \
 	done
 
-latency: ./benchmark/latency.c  $(BUILD_DIR) $(DATA_DIR)
+latency: ./src/latency.c  $(BUILD_DIR) $(DATA_DIR)
 	@for lock in $(LOCKS) ; do \
 		echo "Measuring Latency Lock= $$lock \n"  ; \
-		${CC} ./benchmark/latency.c -o $(BUILD_DIR)/$@ -fopenmp -include ./locks/$$lock.c ${CFLAGS} ; \
+		${CC} ./src/latency.c -o $(BUILD_DIR)/$@ -fopenmp -include ./locks/$$lock.c ${CFLAGS} ; \
 		$(server) ./$(BUILD_DIR)/$@ $(threads) $(sampleSize) $(repetitions) $$lock ; \
 	done 
 
-tp-high-contention: ./benchmark/tp-high-contention.c $(BUILD_DIR) $(DATA_DIR)
+tp-high-contention: ./src/tp-high-contention.c $(BUILD_DIR) $(DATA_DIR)
 	@for lock in $(LOCKS) ; do \
 		echo "Measuring throughput high contention. Lock= $$lock \n" ; \
-		${CC} ./benchmark/tp-high-contention.c -o $(BUILD_DIR)/$@ -fopenmp -include ./locks/$$lock.c ${CFLAGS} ; \
+		${CC} ./src/tp-high-contention.c -o $(BUILD_DIR)/$@ -fopenmp -include ./locks/$$lock.c ${CFLAGS} ; \
 		$(server) ./$(BUILD_DIR)/$@ $(threads) $(sampleSize) $(repetitions) $$lock ; \
 	done
 
-tp-low-contention: ./benchmark/tp-low-contention.c $(BUILD_DIR) $(DATA_DIR)
+tp-low-contention: ./src/tp-low-contention.c $(BUILD_DIR) $(DATA_DIR)
 	@for lock in $(LOCKS) ; do \
 		echo "Measuring throughput low contention. Lock= $$lock \n" ; \
-		${CC} ./benchmark/tp-low-contention.c -o $(BUILD_DIR)/$@ -fopenmp -include ./locks/$$lock.c ${CFLAGS} ; \
+		${CC} ./src/tp-low-contention.c -o $(BUILD_DIR)/$@ -fopenmp -include ./locks/$$lock.c ${CFLAGS} ; \
 		$(server) ./$(BUILD_DIR)/$@ $(threads) $(sampleSize) $(repetitions) $$lock ; \
 	done 
 
@@ -72,16 +72,16 @@ tp-low-contention: ./benchmark/tp-low-contention.c $(BUILD_DIR) $(DATA_DIR)
 bench: correctnessTest fairness latency tp-high-contention tp-low-contention
 
 plotTPHigh:  $(PLOTS_DIR)
-	python3 ./benchmark/plotTP.py high
+	python3 ./src/plotTP.py high
 
 plotTPLow: $(PLOTS_DIR)
-	python3 ./benchmark/plotTP.py low
+	python3 ./src/plotTP.py low
 
 plotLatency: $(PLOTS_DIR)
-	python3 ./benchmark/plotLatency.py
+	python3 ./src/plotLatency.py
 
 plotFairness: $(PLOTS_DIR)
-	python3 ./benchmark/plotFairness.py
+	python3 ./src/plotFairness.py
 
 small-plot: plotTPHigh plotTPLow plotLatency plotFairness
 

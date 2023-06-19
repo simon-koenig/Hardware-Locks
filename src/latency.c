@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <omp.h>
 #include <string.h>
-#include "./src.c"
+#include "./utils.c"
 
 
 int main(int argc, char *argv[]) {

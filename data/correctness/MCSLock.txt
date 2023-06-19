@@ -1,5 +1,5 @@
 Lock name: MCSLock
-Thread number: 16
+Thread number: 4
 Array size: 1000
 --------------------------------------------
 Sequential sum:	508.1255

@@ -330,11 +330,9 @@ Stats dataBenchLatency(int sampleSize, int times){
 
     // Calc average value
     data.average = sum / times;
-    printf("Latency average: %.6f ns\n",data.average*1e9); 
 
     // Calc standard deviation
     data.stdDeviation = standardDeviation(LatencyMeasurements,data.average,times);
-    printf("Latency stDeviation: %.6f ns\n",data.stdDeviation*1e9); 
     return data; 
 }
 
