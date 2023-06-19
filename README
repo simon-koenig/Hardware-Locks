@@ -23,17 +23,18 @@ Compile and run a throughput benchmark for low contention for all the locks impl
 ```sh
 $ make small-bench
 ```
-To plot the data generated run:
+To plot the data generated run the following:
 ```sh
 $ make small-plot
 ```
 
-One can also specify the input parameters: threads, repetitions, sampleSize
-
-e.g. 
+One can also specify the input parameters: 'threads', 'repetitions', 'sampleSize' and 'server'. The parameter 'server' is only used for local testing (just add 'server=' to make command and it will work locally). E.g.: 
 ```sh
 $ make small-bench sampleSize=10000 threads=8
 ```
+
+Correctness test and benchmarks can also be compiled and executed individually:
+
 
 ### **Correctness:**
 Check locks for correctness:
@@ -66,6 +67,12 @@ $ make bench
 
 ```sh
 $ make clean
+```
+```sh
+$ make clean-plots
+```
+```sh
+$ make clean-data
 ```
 
 

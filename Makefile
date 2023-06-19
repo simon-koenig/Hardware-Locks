@@ -82,8 +82,11 @@ plotLatency: $(PLOTS_DIR)
 plotFairness: $(PLOTS_DIR)
 	python3 ./src/plotFairness.py
 
-small-plot: plotTPHigh plotTPLow plotLatency plotFairness
+plot: plotTPHigh plotTPLow plotLatency plotFairness
 
+small-bench: tp-low-contention
+
+small-plot: plotTPLow
 
 # Cleaning
 .PHONY: clean
