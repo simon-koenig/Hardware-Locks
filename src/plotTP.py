@@ -27,8 +27,8 @@ def plotSingleTP(data,label,marker,color):
 
 
     df = {"Threads": threads, "Means": means, "stdDevs": stdDevs}
-    plt.plot(df["Threads"], df["Means"], label = label, marker = marker, color = color)
-    plt.errorbar(df["Threads"], df["Means"], df["stdDevs"], linestyle='None', capsize=3, color=color)
+    # plt.plot(df["Threads"], df["Means"], label = label, marker = marker, color = color)
+    plt.errorbar(df["Threads"], df["Means"], df["stdDevs"], linestyle='None', marker=marker, capsize=2, color = color)
 
 def plotLockTPHigh():
     # Get the current directory
