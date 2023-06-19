@@ -30,9 +30,8 @@ $(PLOTS_DIR):
 	@echo "Creating plots directory: $(PLOTS_DIR)"
 	$(MKDIR) $(PLOTS_DIR)
 
-
-default_target:
-	mkdir build
+install:
+	pip install numpy matplotlib pandas
 
 # run local by specifying variable 'server' as empty (server="")
 correctnessTest: ./src/correctnessTest.c  $(BUILD_DIR) $(DATA_DIR)
