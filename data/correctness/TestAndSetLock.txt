@@ -1,0 +1,8 @@
+Lock name: TestAndSetLock
+Thread number: 16
+Array size: 1000
+--------------------------------------------
+Sequential sum:	508.1255
+Parallel sum:	508.1255
+--------------------------------------------
+No violations in correctness found.

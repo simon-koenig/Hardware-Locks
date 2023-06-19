@@ -58,7 +58,7 @@ double benchmarkLockLowContention(int sampleSize) {
 
             unsigned int localSeed = time(NULL) + omp_get_thread_num();
             srand(localSeed);
-            unsigned int localSteps = rand_r(&localSeed) % 400;
+            unsigned int localSteps = rand_r(&localSeed) % 800;
             for (unsigned int j = 0; j < localSteps; ++j) {
                 rand_r(&localSeed);
             }
