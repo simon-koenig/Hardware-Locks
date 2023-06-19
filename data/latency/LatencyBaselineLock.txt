@@ -1,7 +1,7 @@
 --------------------- 
-# sampleSize, 1000 
+# sampleSize, 10000 
 # repetitions, 50 
-# numberOfThreads, 4 
+# numberOfThreads, 16 
 --------------------- 
 Latency [ns], standardDeviation [ns] 
-87.220967,  103.707565
+117.510828,  158.291532
