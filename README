@@ -27,6 +27,11 @@ To plot the data generated run the following:
 ```sh
 $ make small-plot
 ```
+Explanation: 
+We choose throughput low contention as an example benchmark to show the importance behaviour of locks in multi-thread environments. 
+In low contention cases we gain an advantage in using multiple threads over a single thread. 
+
+
 
 One can also specify the input parameters: 'threads', 'repetitions', 'sampleSize' and 'server'. The parameter 'server' is only used for local testing (just add 'server=' to make command and it will work locally). E.g.: 
 ```sh
