@@ -334,7 +334,7 @@ Stats dataBenchLatency(int sampleSize, int times){
         double value = benchmarkLockLatency(sampleSize);
         LatencyMeasurements[i] = value;
         sum += value;
-        printf("Latency: %.6f ns\n", LatencyMeasurements[i]*1e9); 
+        // printf("Latency: %.6f ns\n", LatencyMeasurements[i]*1e9); 
     }
 
     //qsort(LatencyMeasurements,times ,sizeof(double), compareDoubles);  

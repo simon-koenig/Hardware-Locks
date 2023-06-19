@@ -45,7 +45,6 @@ def plotLockTPHigh():
         lock_name = data_file.split('TPHighContention')[1].split('.txt')[0]
         plotSingleTP(data=file_path,label=lock_name, marker=marker, color=color)
     
-    #plt.title("Tp High Contention")
     plt.xlabel("Threads")
     plt.ylabel("Aggregate throughput rate: ops/sec")
     plt.xscale("log")
@@ -71,7 +70,6 @@ def plotLockTPLow():
         file_path = os.path.join(data_directory, data_file)
         lock_name = data_file.split('TPLowContention')[1].split('.txt')[0]
         plotSingleTP(data=file_path,label=lock_name, marker=marker,color=color)
-    #plt.title("Tp High Contention")
     plt.xlabel("Threads")
     plt.ylabel("Aggregate throughput rate: ops/sec")
     plt.xscale("log")
@@ -86,9 +84,11 @@ def plotLockTPLow():
 
 if __name__ == "__main__": 
     if sys.argv[1] == "high":
+        plt.figure(figsize=(10,6))
         plotLockTPHigh()
 
     if sys.argv[1] == "low":
+        plt.figure(figsize=(10,6))
         plotLockTPLow()
 
 
