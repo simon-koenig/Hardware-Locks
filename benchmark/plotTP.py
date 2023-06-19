@@ -49,6 +49,7 @@ def plotLockTPHigh():
     plt.xlabel("Threads")
 
     plt.ylabel("Aggregate throughput rate: ops/sec")
+    plt.xscale("log")
     plt.yscale("log")
     plt.legend()
     plt.grid()
@@ -71,6 +72,7 @@ def plotLockTPLow():
     #plt.title("Tp High Contention")
     plt.xlabel("Threads")
     plt.ylabel("Aggregate throughput rate: ops/sec")
+    plt.xscale("log")
     plt.yscale("log")
     plt.legend()
     plt.grid()
